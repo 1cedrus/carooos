@@ -1,0 +1,95 @@
+import { createContext, useContext, useEffect, useState } from 'react';
+import {
+  FinishMessage,
+  GameMessage,
+  GameMessageType,
+  JoinMessage,
+  MessagesMessage,
+  MoveMessage,
+  Props,
+} from '@/types.ts';
+import { useStompClientContext } from '@/providers/StompClientProvider.tsx';
+import { useUserInformationContext } from '@/providers/UserInformationProvider.tsx';
+
+export interface GameContext {
+  id: string;
+  nextMove?: string;
+  currentMoves?: number[];
+  firstUser: string;
+  secondUser: string;
+  winner?: string;
+  message?: MessagesMessage;
+  doMove: (move: number) => void;
+}
+
+export const GameContext = createContext<GameContext>({} as GameContext);
+
+export const useGameContext = () => {
+  return useContext(GameContext);
+};
+
+interface GameProviderProps extends Props {
+  id: string;
+}
+
+export default function GameProvider({ id, children }: GameProviderProps) {
+  const { username } = useUserInformationContext();
+  const { stompClient } = useStompClientContext();
+  const [nextMove, setNextMove] = useState<string>();
+  const [currentMoves, setCurrentMoves] = useState<number[]>([]);
+  const [winner, setWinner] = useState<string>();
+  const [message, setMessage] = useState<MessagesMessage>();
+  const [firstUser, secondUser] = id.split('-');
+
+  useEffect(() => {
+    if (!stompClient) return;
+    const sub = stompClient!.subscribe(`/topic/game/${id}`, (message) => {
+      const content = JSON.parse(message.body) as GameMessage;
+
+      console.log(content);
+
+      switch (content.type) {
+        case GameMessageType.Join:
+          {
+            const { currentMoves, nextMove } = content as JoinMessage;
+            setNextMove(nextMove);
+            setCurrentMoves(currentMoves);
+          }
+          break;
+        case GameMessageType.Move:
+          const { move, nextMove } = content as MoveMessage;
+          setCurrentMoves((pre) => [...pre, move]);
+          setNextMove(nextMove);
+          break;
+        case GameMessageType.Finish:
+          const { winner } = content as FinishMessage;
+          setWinner(winner);
+          break;
+        case GameMessageType.Messages:
+          setMessage(content as MessagesMessage);
+          setTimeout(() => setMessage({} as MessagesMessage), 5000);
+          break;
+      }
+    });
+
+    stompClient!.send(`/app/join/${id}`, {}, '');
+
+    return () => {
+      sub.unsubscribe();
+    };
+  }, [stompClient]);
+
+  const doMove = (move: number) => {
+    if (nextMove !== username) {
+      return;
+    }
+
+    stompClient?.send(`/app/game/${id}`, {}, move.toString());
+  };
+
+  return (
+    <GameContext.Provider value={{ id, nextMove, currentMoves, winner, firstUser, secondUser, doMove, message }}>
+      {children}
+    </GameContext.Provider>
+  );
+}
