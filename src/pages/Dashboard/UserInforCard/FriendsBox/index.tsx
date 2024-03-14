@@ -1,4 +1,4 @@
-import { Box, IconButton, TextField } from '@mui/material';
+import { Box, IconButton, TextField, Button } from '@mui/material';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import { useEffect, useState } from 'react';
 import { useUserInformationContext } from '@/providers/UserInformationProvider.tsx';
@@ -9,7 +9,6 @@ import FriendCard from '@/pages/Dashboard/UserInforCard/FriendsBox/FriendCard.ts
 import FriendRequestCard from '@/pages/Dashboard/UserInforCard/FriendsBox/FriendRequestCard.tsx';
 import { FriendsMessage, FriendsMessageType } from '@/types.ts';
 import { EventName, triggerEvent } from '@/utils/eventemitter.ts';
-import Button from '@/components/custom/Button.tsx';
 import { useStompClientContext } from '@/providers/StompClientProvider.tsx';
 import { useNavigate } from 'react-router-dom';
 
@@ -55,7 +54,9 @@ export default function FriendsBox() {
           triggerEvent(
             EventName.OpenInforSnackBar,
             `${content.username} want to play with youu!!!`,
-            <Button onClick={() => doResponse(content.username)}>Okii</Button>,
+            <Button variant='contained' sx={{ color: 'white' }} onClick={() => doResponse(content.username)}>
+              Okii
+            </Button>,
           );
           break;
         case FriendsMessageType.InviteResponse:
@@ -71,7 +72,7 @@ export default function FriendsBox() {
   }, [stompClient]);
 
   return (
-    <Box className='border-black border-2 rounded p-2'>
+    <Box className='flex-auto flex flex-col border-black border-2 rounded p-2 gap-4 overflow-auto'>
       <Box className='flex gap-2'>
         <TextField
           value={friendQuery}
@@ -88,8 +89,8 @@ export default function FriendsBox() {
           {onAddFriends ? <CloseOutlinedIcon /> : <AddOutlinedIcon />}
         </IconButton>
       </Box>
-      <Box className='h-[15rem] overflow-scroll'>
-        <Box className='mt-4 flex flex-col gap-2'>
+      <Box className='flex-auto overflow-auto'>
+        <Box className='h-full flex flex-col gap-2'>
           {onAddFriends ? (
             <>
               {result

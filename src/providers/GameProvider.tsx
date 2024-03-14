@@ -20,6 +20,7 @@ export interface GameContext {
   winner?: string;
   message?: MessagesMessage;
   doMove: (move: number) => void;
+  isDraw?: boolean;
 }
 
 export const GameContext = createContext<GameContext>({} as GameContext);
@@ -40,13 +41,12 @@ export default function GameProvider({ id, children }: GameProviderProps) {
   const [winner, setWinner] = useState<string>();
   const [message, setMessage] = useState<MessagesMessage>();
   const [firstUser, secondUser] = id.split('-');
+  const [isDraw, setIsDraw] = useState(false);
 
   useEffect(() => {
-    if (!stompClient) return;
+    if (!stompClient || (username !== firstUser && username !== secondUser)) return;
     const sub = stompClient!.subscribe(`/topic/game/${id}`, (message) => {
       const content = JSON.parse(message.body) as GameMessage;
-
-      console.log(content);
 
       switch (content.type) {
         case GameMessageType.Join:
@@ -69,6 +69,9 @@ export default function GameProvider({ id, children }: GameProviderProps) {
           setMessage(content as MessagesMessage);
           setTimeout(() => setMessage({} as MessagesMessage), 5000);
           break;
+        case GameMessageType.Draw:
+          setIsDraw(true);
+          break;
       }
     });
 
@@ -80,7 +83,7 @@ export default function GameProvider({ id, children }: GameProviderProps) {
   }, [stompClient]);
 
   const doMove = (move: number) => {
-    if (nextMove !== username) {
+    if (nextMove !== username || currentMoves.includes(move)) {
       return;
     }
 
@@ -88,7 +91,8 @@ export default function GameProvider({ id, children }: GameProviderProps) {
   };
 
   return (
-    <GameContext.Provider value={{ id, nextMove, currentMoves, winner, firstUser, secondUser, doMove, message }}>
+    <GameContext.Provider
+      value={{ id, nextMove, currentMoves, winner, firstUser, secondUser, doMove, message, isDraw }}>
       {children}
     </GameContext.Provider>
   );

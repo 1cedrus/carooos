@@ -13,7 +13,7 @@ export default function UserInforCard() {
 
   return (
     <Grow in={true}>
-      <Box className='flex flex-col gap-8 h-[30rem] w-[25rem] p-4 border-black border-2 rounded'>
+      <Box className='flex flex-col gap-8 h-1/2 lg:h-[30rem] w-full lg:w-[25rem] p-4 border-black border-2 rounded'>
         <Box className='flex-initial flex gap-4 items-center justify-between'>
           <Avatar
             sx={{ width: largeScreen ? 60 : 40, height: largeScreen ? 60 : 40, border: '2px solid black' }}></Avatar>

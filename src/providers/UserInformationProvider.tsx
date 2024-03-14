@@ -3,7 +3,6 @@ import useFetch from '@/hooks/useFetch.ts';
 import { api } from '@/utils/api.ts';
 import { Props } from '@/types.ts';
 import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
-import Snackbar from '@/components/custom/Snackbar.tsx';
 
 export interface UserInformationContext {
   username?: string;
@@ -53,10 +52,7 @@ export default function UserInformationProvider({ children }: Props) {
 
   return (
     <UserInformationContext.Provider value={{ username, elo, friends, requests, setRequests, setFriends }}>
-      <>
-        {children}
-        <Snackbar />
-      </>
+      {children}
     </UserInformationContext.Provider>
   );
 }

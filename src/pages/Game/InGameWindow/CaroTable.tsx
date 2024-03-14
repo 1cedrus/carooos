@@ -12,11 +12,11 @@ const noughtImage = new Image();
 noughtImage.src = Nought;
 
 export default function CaroTable() {
-  const { doMove, currentMoves, winner } = useGameContext();
+  const { doMove, currentMoves, winner, isDraw } = useGameContext();
   const largeScreen = useMediaQuery('(min-width:640px)');
 
   useEffect(() => {
-    if (!winner) return;
+    if (!winner && !isDraw) return;
 
     triggerEvent(EventName.OpenWinnerAnnouncementModal);
   }, [winner]);

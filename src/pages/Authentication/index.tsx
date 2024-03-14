@@ -4,7 +4,7 @@ import { Box } from '@mui/material';
 
 export default function Authentication() {
   return (
-    <Box>
+    <Box className='px-4'>
       <SignUp />
       <SignIn />
     </Box>

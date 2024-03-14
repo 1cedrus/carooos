@@ -36,6 +36,7 @@ export enum GameMessageType {
   Join = 'Join',
   Finish = 'Finish',
   Messages = 'Messages',
+  Draw = 'Draw',
 }
 
 export interface GameMessage {

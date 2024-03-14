@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 export default function WinnerAnnouncement() {
   const navigate = useNavigate();
   const [open, setOpen] = useState(false);
-  const { winner } = useGameContext();
+  const { winner, isDraw } = useGameContext();
 
   useEffect(() => {
     const showModal = () => setOpen(true);
@@ -25,7 +25,10 @@ export default function WinnerAnnouncement() {
 
   return (
     <Modal open={open} onClose={onClose}>
-      <Box className='text-2xl font-bold rounded absolute top-1/2 left-1/2 bg-white p-4 w-[20rem] text-center translate-x-[-50%] translate-y-[-50%]'>{`The winner is ${winner}`}</Box>
+      <Box className='text-2xl font-bold rounded absolute top-1/2 left-1/2 bg-white p-4 w-[20rem] text-center translate-x-[-50%] translate-y-[-50%]'>
+        {winner && `The winner is ${winner}`}
+        {isDraw && `This game is draw`}
+      </Box>
     </Modal>
   );
 }

@@ -4,6 +4,7 @@ import { Box } from '@mui/material';
 import { useEffect } from 'react';
 import UserInforCard from '@/pages/Dashboard/UserInforCard';
 import GameCard from '@/pages/Dashboard/GameCard.tsx';
+import SandboxCard from '@/pages/Dashboard/SandboxCard.tsx';
 
 export default function Dashboard() {
   const navigate = useNavigate();
@@ -16,9 +17,12 @@ export default function Dashboard() {
   }, [isAuthenticated]);
 
   return (
-    <Box className='flex flex-col lg:flex-row h-screen py-4 gap-4 lg:gap-5 mx-4 justify-center items-center'>
+    <Box className='flex flex-col lg:flex-row h-screen py-4 gap-4 mx-4 justify-center items-center'>
       <UserInforCard />
-      <GameCard />
+      <Box className='flex lg:flex-col gap-4 h-[10rem] lg:h-[30rem] w-full lg:w-fit'>
+        <GameCard />
+        <SandboxCard />
+      </Box>
     </Box>
   );
 }

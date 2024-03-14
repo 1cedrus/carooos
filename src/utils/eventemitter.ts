@@ -9,6 +9,5 @@ export const triggerEvent = (name: EventName, ...args: any[]) => {
 export enum EventName {
   OpenInforSnackBar = 'OpenInforSnackBar',
   OpenSettingsDialog = 'OpenSettingsDialog',
-  OpenFriendRequestDialog = 'OpenFriendRequestDialog ',
   OpenWinnerAnnouncementModal = 'OpenWinnerAnnouncementModal',
 }

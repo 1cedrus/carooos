@@ -1,24 +1,36 @@
 import { Box, Grow, IconButton } from '@mui/material';
 import PlayArrowOutlinedIcon from '@mui/icons-material/PlayArrowOutlined';
 import { useStompClientContext } from '@/providers/StompClientProvider.tsx';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { FindingMessage, MatchingMessage, OkMessage, QueueMessage, QueueMessageType } from '@/types.ts';
 import { useNavigate } from 'react-router-dom';
 import { useUserInformationContext } from '@/providers/UserInformationProvider.tsx';
-import SandboxCard from '@/pages/Dashboard/SandboxCard.tsx';
+import { api } from '@/utils/api.ts';
+import useFetch from '@/hooks/useFetch.ts';
 
 export default function GameCard() {
+  const fetch = useFetch();
   const navigate = useNavigate();
   const { stompClient } = useStompClientContext();
   const { username, elo } = useUserInformationContext();
+  const [currentGame, setCurrentGame] = useState<string>();
   const [onQueue, setOnQueue] = useState(false);
   const [onWaitingConfirmation, setOnWaitingConfirmation] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const response = await fetch(`${api.http}/api/game`);
+
+      if (response.ok) {
+        const currentGame = await response.text();
+        setCurrentGame(currentGame);
+      }
+    })();
+  }, []);
 
   const doQueue = () => {
     const stompSub = stompClient?.subscribe('/topic/queue', (message) => {
       const content = JSON.parse(message.body) as QueueMessage;
-
-      console.log(content);
 
       switch (content.type) {
         case QueueMessageType.FINDING:
@@ -90,13 +102,26 @@ export default function GameCard() {
     setOnQueue(true);
   };
 
+  const doContinue = () => {
+    navigate(`/game/${currentGame}`);
+  };
+
   return (
     <Grow in={true}>
-      <Box className='flex lg:flex-col h-[30rem] w-[25rem] justify-center gap-4 lg:gap-5'>
+      <Box className='lg:h-1/2 flex lg:flex-col w-full lg:w-[25rem] justify-center gap-4 lg:gap-5'>
         <Box className='flex flex-col lg:w-[25rem] flex-auto border-black border-2 rounded justify-center items-center gap-4'>
-          {stompClient?.connected ? (
+          {currentGame ? (
+            <Box className='flex flex-col justify-center items-center gap-4'>
+              <Box component='h2' className='text-2xl hidden lg:block'>
+                Continue
+              </Box>
+              <IconButton onClick={doContinue} sx={{ color: 'black', border: '2px solid black' }} size='large'>
+                <PlayArrowOutlinedIcon fontSize='large' />
+              </IconButton>
+            </Box>
+          ) : stompClient?.connected ? (
             <>
-              <Box component='h2' className='text-2xl'>
+              <Box component='h2' className='text-2xl hidden lg:block'>
                 Click to play!
               </Box>
               {onQueue ? (
@@ -113,7 +138,6 @@ export default function GameCard() {
             </Box>
           )}
         </Box>
-        <SandboxCard />
       </Box>
     </Grow>
   );
