@@ -25,9 +25,11 @@ export default function CaroTable() {
     if (currentMoves?.length === 0) return;
 
     const canvas = document.getElementById('layer-1') as HTMLCanvasElement;
+    const canvasLayer2 = document.getElementById('layer-2') as HTMLCanvasElement;
     const context = canvas.getContext('2d');
+    const contextLayer2 = canvasLayer2.getContext('2d');
 
-    if (!context) {
+    if (!context || !contextLayer2) {
       console.log('Error occupied!');
       return;
     }
@@ -92,6 +94,13 @@ export default function CaroTable() {
     }
 
     context.fillStyle = 'rgba(218,178,218,0.5)';
+    context.fillRect(x * 50, y * 50, 50, 50);
+
+    // Draw last mark spot
+    if (!currentMoves) return;
+    x = Math.floor(currentMoves[currentMoves?.length - 1] % 20);
+    y = Math.floor(currentMoves[currentMoves?.length - 1] / 20);
+
     context.fillRect(x * 50, y * 50, 50, 50);
   };
 

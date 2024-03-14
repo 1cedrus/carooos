@@ -67,7 +67,6 @@ export default function GameProvider({ id, children }: GameProviderProps) {
           break;
         case GameMessageType.Messages:
           setMessage(content as MessagesMessage);
-          setTimeout(() => setMessage({} as MessagesMessage), 5000);
           break;
         case GameMessageType.Draw:
           setIsDraw(true);
@@ -81,6 +80,14 @@ export default function GameProvider({ id, children }: GameProviderProps) {
       sub.unsubscribe();
     };
   }, [stompClient]);
+
+  useEffect(() => {
+    const clearMessage = setTimeout(() => setMessage({} as MessagesMessage), 5000);
+
+    return () => {
+      clearTimeout(clearMessage);
+    };
+  }, [message]);
 
   const doMove = (move: number) => {
     if (nextMove !== username || currentMoves.includes(move)) {

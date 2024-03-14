@@ -31,13 +31,13 @@ export default function MessageButton() {
   };
 
   return (
-    <Box className='flex gap-2 md:w-[40rem]'>
+    <Box className='flex gap-2 lg:w-[40rem]'>
       <IconButton
         onClick={() => setShow((pre) => !pre)}
         sx={{ color: 'black', border: '1px solid black', borderRadius: '5px' }}>
         <MessageOutlinedIcon fontSize='small' />
       </IconButton>
-      <Zoom in={show} className='flex flex-auto gap-2'>
+      <Zoom in={show}>
         <Box component='form' onSubmit={sendMessage}>
           <FormControl>
             <OutlinedInput
