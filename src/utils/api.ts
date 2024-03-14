@@ -1,4 +1,4 @@
 export const api: Record<string, string> = {
-  http: 'http://localhost:9000',
-  ws: 'ws://localhost:9000/ws',
+  http: 'http://159.223.61.167:9000',
+  ws: 'ws://159.223.61.167:9000/ws',
 };
