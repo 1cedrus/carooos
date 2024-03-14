@@ -5,7 +5,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import useFetch from '@/hooks/useFetch.ts';
 import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
 import { EventName, triggerEvent } from '@/utils/eventemitter.ts';
-import Snackbar from '@/components/custom/Snackbar.tsx';
 import { api } from '@/utils/api.ts';
 
 export default function SignIn() {
@@ -64,7 +63,6 @@ export default function SignIn() {
           </Box>
         </Box>
       </Grow>
-      <Snackbar />
     </>
   );
 }
