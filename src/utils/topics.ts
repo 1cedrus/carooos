@@ -3,4 +3,7 @@ export const topics = {
   FRIENDS: '/user/topic/friends',
   MESSAGES: '/user/topic/messages',
   USER_FRIENDS: (username: string) => `/user/${username}/topic/friends`,
+  GAME: (id: string) => `/topic/game/${id}`,
+  JOIN_GAME: (id: string) => `/app/join/${id}`,
+  PLAY_GAME: (id: string) => `/app/game/${id}`,
 };
