@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import { useUserInformationContext } from '@/providers/UserInformationProvider.tsx';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import usePublicInfos from '@/hooks/usePublicInfos.ts';
-import FriendResponseCard from '@/pages/Dashboard/UserInforCard/FriendsBox/FriendResponseCard.tsx';
-import FriendCard from '@/pages/Dashboard/UserInforCard/FriendsBox/FriendCard.tsx';
-import FriendRequestCard from '@/pages/Dashboard/UserInforCard/FriendsBox/FriendRequestCard.tsx';
+import FriendResponseCard from '@/pages/Dashboard/UserInfoCard/FriendsBox/FriendResponseCard.tsx';
+import FriendCard from '@/pages/Dashboard/UserInfoCard/FriendsBox/FriendCard.tsx';
+import FriendRequestCard from '@/pages/Dashboard/UserInfoCard/FriendsBox/FriendRequestCard.tsx';
 import { FriendsMessage, FriendsMessageType, Props } from '@/types.ts';
 import { EventName, triggerEvent } from '@/utils/eventemitter.ts';
 import { useStompClientContext } from '@/providers/StompClientProvider.tsx';
@@ -49,7 +49,7 @@ export default function FriendsBox() {
           return triggerEvent(
             EventName.OpenInforSnackBar,
             `${content.username} want to play with youu!!!`,
-            <AcceptButton sendUser={content.username} />,
+            <AcceptButton acceptAction={() => doAccept(content.username)} />,
           );
         case FriendsMessageType.InviteResponse:
           return (() => {
@@ -63,6 +63,19 @@ export default function FriendsBox() {
       sub?.unsubscribe();
     };
   }, [stompClient]);
+
+  const doAccept = async (responseUser: string) => {
+    stompClient?.send(
+      topics.USER_FRIENDS(responseUser),
+      {},
+      JSON.stringify({
+        type: FriendsMessageType.InviteResponse,
+        username: username,
+      }),
+    );
+
+    navigate(`/game/${responseUser}-${username}`);
+  };
 
   return (
     <Box className='flex-auto flex flex-col border-black border-2 rounded p-2 gap-4 overflow-auto'>
@@ -108,29 +121,12 @@ export default function FriendsBox() {
 }
 
 interface AcceptButtonProps extends Props {
-  sendUser: string;
+  acceptAction: () => void;
 }
 
-function AcceptButton({ sendUser }: AcceptButtonProps) {
-  const navigate = useNavigate();
-  const { username } = useUserInformationContext();
-  const { stompClient } = useStompClientContext();
-
-  const doResponse = async (responseUser: string) => {
-    stompClient?.send(
-      topics.USER_FRIENDS(responseUser),
-      {},
-      JSON.stringify({
-        type: FriendsMessageType.InviteResponse,
-        username: username,
-      }),
-    );
-
-    navigate(`/game/${responseUser}-${username}`);
-  };
-
+function AcceptButton({ acceptAction }: AcceptButtonProps) {
   return (
-    <Button variant='contained' sx={{ color: 'white' }} onClick={() => doResponse(sendUser)}>
+    <Button variant='contained' sx={{ color: 'white' }} onClick={acceptAction}>
       Accept
     </Button>
   );

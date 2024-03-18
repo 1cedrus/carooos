@@ -1,10 +1,10 @@
 import { Avatar, Box, Grow, IconButton, useMediaQuery } from '@mui/material';
 import { useUserInformationContext } from '@/providers/UserInformationProvider.tsx';
-import FriendsBox from '@/pages/Dashboard/UserInforCard/FriendsBox';
+import FriendsBox from '@/pages/Dashboard/UserInfoCard/FriendsBox';
 import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
 import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
 
-export default function UserInforCard() {
+export default function UserInfoCard() {
   const { doLogout } = useAuthenticationContext();
   const { username, elo } = useUserInformationContext();
   const largeScreen = useMediaQuery('(min-width:640px)');
