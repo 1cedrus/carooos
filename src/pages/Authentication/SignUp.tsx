@@ -33,7 +33,6 @@ export default function SignUp() {
       body: JSON.stringify({
         username,
         password,
-        passwordConfirmation,
       }),
     });
 
@@ -46,7 +45,13 @@ export default function SignUp() {
   };
 
   const isAvailable = pathname === '/register';
-  const isError = !/^[a-zA-Z0-9_]+$/.test(username) || password !== passwordConfirmation;
+  const isError =
+    username.length <= 3 ||
+    username.length > 16 ||
+    password.length < 5 ||
+    password.length > 32 ||
+    !/^[a-zA-Z0-9_]+$/.test(username) ||
+    password !== passwordConfirmation;
 
   return (
     <Grow in={pathname === '/register'}>
@@ -57,13 +62,15 @@ export default function SignUp() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder='user'
-              helperText='must only contains a-z, A-z, _'
+              helperText='must only contains a-z, A-z, _ and 4 to 16 characters'
               error={!!username && !/^[a-zA-Z0-9_]+$/.test(username)}
             />
             <TextField
               type='password'
               value={password}
               onChange={(e) => setPassword(e.target.value)}
+              helperText='must 5 characters or above, lest than or equal 32'
+              error={password.length < 5}
               placeholder='passw'
             />
             <TextField
