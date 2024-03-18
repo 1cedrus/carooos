@@ -32,7 +32,9 @@ export default function FriendsBox() {
   };
 
   useEffect(() => {
-    const sub = stompClient?.subscribe('/user/topic/friends', (message) => {
+    if (!stompClient || !stompClient.connected) return;
+
+    const sub = stompClient?.subscribe(topics.FRIENDS, (message) => {
       const content = JSON.parse(message.body) as FriendsMessage;
 
       switch (content.type) {

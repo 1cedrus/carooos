@@ -3,6 +3,7 @@ import { Props } from '@/types.ts';
 import { CompatClient, Stomp } from '@stomp/stompjs';
 import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
 import { api } from '@/utils/api.ts';
+import { topics } from '@/utils/topics.ts';
 
 export interface StompClientContext {
   stompClient?: CompatClient;
@@ -27,9 +28,10 @@ export default function StompClientProvider({ children }: Props) {
         Authorization: `Bearer ${authToken}`,
       },
       () => {
-        stompClient.subscribe('/user/topic/messages', (message) => {
+        stompClient.subscribe(topics.FRIENDS, (message) => {
           console.log(message.body);
         });
+
         console.log('WebSocket established!');
       },
     );
