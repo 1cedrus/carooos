@@ -1,10 +1,11 @@
-import { Box, IconButton, Grow } from '@mui/material';
+import { Box, Grow, IconButton } from '@mui/material';
 import { Props } from '@/types.ts';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import { useState } from 'react';
-import useFetch from '@/hooks/useFetch.ts';
-import { api } from '@/utils/api.ts';
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
+import FriendsService from '@/services/FriendsService.ts';
+import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
+import { EventName, triggerEvent } from '@/utils/eventemitter.ts';
 
 interface FriendRequestCardProps extends Props {
   username: string;
@@ -12,16 +13,14 @@ interface FriendRequestCardProps extends Props {
 }
 
 export default function FriendRequestCard({ username, elo }: FriendRequestCardProps) {
-  const fetch = useFetch();
+  const { authToken } = useAuthenticationContext();
   const [requested, setRequested] = useState(false);
 
   const doSendRequest = async () => {
-    const response = await fetch(`${api.http}/api/friends/${username}`, {
-      method: 'post',
-    });
-
-    if (response.status === 202) {
+    if (await FriendsService.send(username, authToken)) {
       setRequested(true);
+    } else {
+      triggerEvent(EventName.OpenInforSnackBar, 'Some error occurred!');
     }
   };
 

@@ -1,68 +1,59 @@
-import { Box, IconButton, TextField, Button } from '@mui/material';
+import { Box, Button, IconButton, TextField } from '@mui/material';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import { useEffect, useState } from 'react';
 import { useUserInformationContext } from '@/providers/UserInformationProvider.tsx';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
-import usePublicInformations from '@/hooks/usePublicInformations.ts';
+import usePublicInfos from '@/hooks/usePublicInfos.ts';
 import FriendResponseCard from '@/pages/Dashboard/UserInforCard/FriendsBox/FriendResponseCard.tsx';
 import FriendCard from '@/pages/Dashboard/UserInforCard/FriendsBox/FriendCard.tsx';
 import FriendRequestCard from '@/pages/Dashboard/UserInforCard/FriendsBox/FriendRequestCard.tsx';
-import { FriendsMessage, FriendsMessageType } from '@/types.ts';
+import { FriendsMessage, FriendsMessageType, Props } from '@/types.ts';
 import { EventName, triggerEvent } from '@/utils/eventemitter.ts';
 import { useStompClientContext } from '@/providers/StompClientProvider.tsx';
 import { useNavigate } from 'react-router-dom';
+import { topics } from '@/utils/topics.ts';
+
+enum FriendsMode {
+  View,
+  Add,
+  Delete,
+}
 
 export default function FriendsBox() {
   const navigate = useNavigate();
+  const [mode, setMode] = useState(FriendsMode.View);
   const { stompClient } = useStompClientContext();
-  const { friends, requests, username, setFriends, setRequests } = useUserInformationContext();
+  const { friends, requests, username } = useUserInformationContext();
   const [friendQuery, setFriendQuery] = useState('');
-  const result = usePublicInformations(friendQuery);
-  const [onAddFriends, setOnAddFriends] = useState(false);
+  const result = usePublicInfos(friendQuery);
 
-  const switchMode = () => {
-    setOnAddFriends((pre) => !pre);
-  };
-
-  const doResponse = async (responseUser: string) => {
-    stompClient?.send(
-      `/user/${responseUser}/topic/friends`,
-      {},
-      JSON.stringify({
-        type: FriendsMessageType.InviteResponse,
-        username: username,
-      }),
-    );
-
-    navigate(`/game/${responseUser}-${username}`);
+  const switchMode = (mode: FriendsMode) => {
+    setMode(mode);
   };
 
   useEffect(() => {
     const sub = stompClient?.subscribe('/user/topic/friends', (message) => {
       const content = JSON.parse(message.body) as FriendsMessage;
 
-      console.log(content);
-
       switch (content.type) {
         case FriendsMessageType.FriendRequest:
-          setRequests((pre) => [content.username, ...(pre || [])]);
-          break;
+          return triggerEvent(EventName.ReloadInfo);
         case FriendsMessageType.FriendResponse:
-          setFriends((pre) => [content.username, ...(pre || [])]);
-          break;
+          return (() => {
+            triggerEvent(EventName.ReloadInfo);
+            triggerEvent(EventName.OpenInforSnackBar, `${username} accepted your friend request!`);
+          })();
         case FriendsMessageType.InviteRequest:
-          triggerEvent(
+          return triggerEvent(
             EventName.OpenInforSnackBar,
             `${content.username} want to play with youu!!!`,
-            <Button variant='contained' sx={{ color: 'white' }} onClick={() => doResponse(content.username)}>
-              Okii
-            </Button>,
+            <AcceptButton sendUser={content.username} />,
           );
-          break;
         case FriendsMessageType.InviteResponse:
-          triggerEvent(EventName.OpenInforSnackBar, `${content.username} accepted your invite!`);
-          navigate(`/game/${username}-${content.username}`);
-          break;
+          return (() => {
+            navigate(`/game/${username}-${content.username}`);
+            triggerEvent(EventName.OpenInforSnackBar, `${content.username} accepted your invite!`);
+          })();
       }
     });
 
@@ -83,15 +74,15 @@ export default function FriendsBox() {
           sx={{ borderColor: 'lightgray' }}
         />
         <IconButton
-          onClick={switchMode}
+          onClick={() => switchMode(mode === FriendsMode.Add ? FriendsMode.View : FriendsMode.Add)}
           size='small'
           sx={{ color: 'black', border: '1px solid lightgray', borderRadius: '10%' }}>
-          {onAddFriends ? <CloseOutlinedIcon /> : <AddOutlinedIcon />}
+          {mode === FriendsMode.Add ? <CloseOutlinedIcon /> : <AddOutlinedIcon />}
         </IconButton>
       </Box>
       <Box className='flex-auto overflow-auto'>
         <Box className='h-full flex flex-col gap-2'>
-          {onAddFriends ? (
+          {mode === FriendsMode.Add ? (
             <>
               {result
                 ?.filter(
@@ -111,5 +102,34 @@ export default function FriendsBox() {
         </Box>
       </Box>
     </Box>
+  );
+}
+
+interface AcceptButtonProps extends Props {
+  sendUser: string;
+}
+
+function AcceptButton({ sendUser }: AcceptButtonProps) {
+  const navigate = useNavigate();
+  const { username } = useUserInformationContext();
+  const { stompClient } = useStompClientContext();
+
+  const doResponse = async (responseUser: string) => {
+    stompClient?.send(
+      topics.USER_FRIENDS(responseUser),
+      {},
+      JSON.stringify({
+        type: FriendsMessageType.InviteResponse,
+        username: username,
+      }),
+    );
+
+    navigate(`/game/${responseUser}-${username}`);
+  };
+
+  return (
+    <Button variant='contained' sx={{ color: 'white' }} onClick={() => doResponse(sendUser)}>
+      Accept
+    </Button>
   );
 }

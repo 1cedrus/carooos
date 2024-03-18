@@ -1,5 +1,5 @@
 import { Props } from '@/types.ts';
-import usePublicInformation from '@/hooks/usePublicInformation.ts';
+import usePublicInfo from '@/hooks/usePublicInfo.ts';
 import { Avatar, Box, useMediaQuery } from '@mui/material';
 
 interface UserProps extends Props {
@@ -7,7 +7,7 @@ interface UserProps extends Props {
 }
 
 export default function User({ className, username }: UserProps) {
-  const { elo } = usePublicInformation(username!);
+  const { elo } = usePublicInfo(username!);
   const largeScreen = useMediaQuery('(min-width:640px)');
 
   return (

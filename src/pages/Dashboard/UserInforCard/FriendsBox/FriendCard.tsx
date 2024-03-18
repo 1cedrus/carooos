@@ -1,6 +1,6 @@
 import { Box, Grow, IconButton } from '@mui/material';
 import { FriendsMessageType, Props } from '@/types.ts';
-import usePublicInformation from '@/hooks/usePublicInformation.ts';
+import usePublicInfo from '@/hooks/usePublicInfo.ts';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import MessageOutlinedIcon from '@mui/icons-material/MessageOutlined';
 import { useUserInformationContext } from '@/providers/UserInformationProvider.tsx';
@@ -12,7 +12,7 @@ interface FriendCard extends Props {
 
 export default function FriendCard({ friend }: FriendCard) {
   const { username: user } = useUserInformationContext();
-  const { username, elo } = usePublicInformation(friend);
+  const { username, elo } = usePublicInfo(friend);
   const { stompClient } = useStompClientContext();
 
   const doInvite = async () => {

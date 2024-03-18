@@ -1,53 +1,29 @@
 import { Props } from '@/types.ts';
-import useFetch from '@/hooks/useFetch.ts';
-import { api } from '@/utils/api.ts';
 import { Box, Grow, IconButton } from '@mui/material';
-import usePublicInformation from '@/hooks/usePublicInformation.ts';
-import { useUserInformationContext } from '@/providers/UserInformationProvider.tsx';
+import usePublicInfo from '@/hooks/usePublicInfo.ts';
 import CheckOutlinedIcon from '@mui/icons-material/CheckOutlined';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
+import FriendsService from '@/services/FriendsService.ts';
+import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
+import { EventName, triggerEvent } from '@/utils/eventemitter.ts';
 
 interface FriendResponseCardProps extends Props {
   sender: string;
 }
 
 export default function FriendResponseCard({ sender }: FriendResponseCardProps) {
-  const fetch = useFetch();
-  const { setFriends, setRequests } = useUserInformationContext();
-  const { username, elo } = usePublicInformation(sender);
+  const { authToken } = useAuthenticationContext();
+  const { username, elo } = usePublicInfo(sender);
 
   const doAccept = async () => {
-    const response = await fetch(`${api.http}/api/friends/${username}`, {
-      method: 'post',
-    });
-
-    if (response.status === 202) {
-      setFriends((pre) => [...(pre || []), username!]);
-      setRequests((pre) => {
-        const newState = [...(pre || [])];
-        const index = newState.indexOf(username!);
-        if (index > -1) {
-          newState.splice(index, 1);
-        }
-        return newState;
-      });
+    if (await FriendsService.send(username, authToken)) {
+      triggerEvent(EventName.ReloadInfo);
     }
   };
 
   const doRefuse = async () => {
-    const response = await fetch(`${api.http}/api/friends/${username}`, {
-      method: 'delete',
-    });
-
-    if (response.status === 202) {
-      setRequests((pre) => {
-        const newState = [...(pre || [])];
-        const index = newState.indexOf(username!);
-        if (index > -1) {
-          newState.splice(index, 1);
-        }
-        return newState;
-      });
+    if (await FriendsService.refuse(username!, authToken)) {
+      triggerEvent(EventName.ReloadInfo);
     }
   };
 

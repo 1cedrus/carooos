@@ -1,34 +1,31 @@
 import { Box, Grow, IconButton } from '@mui/material';
 import PlayArrowOutlinedIcon from '@mui/icons-material/PlayArrowOutlined';
 import { useStompClientContext } from '@/providers/StompClientProvider.tsx';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { FindingMessage, MatchingMessage, OkMessage, QueueMessage, QueueMessageType } from '@/types.ts';
 import { useNavigate } from 'react-router-dom';
 import { useUserInformationContext } from '@/providers/UserInformationProvider.tsx';
-import { api } from '@/utils/api.ts';
-import useFetch from '@/hooks/useFetch.ts';
+import useAsync from '@/hooks/useAsync.ts';
+import GameService from '@/services/GameService.ts';
+import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
 
 export default function GameCard() {
-  const fetch = useFetch();
   const navigate = useNavigate();
+  const { authToken } = useAuthenticationContext();
   const { stompClient } = useStompClientContext();
   const { username, elo } = useUserInformationContext();
   const [currentGame, setCurrentGame] = useState<string>();
   const [onQueue, setOnQueue] = useState(false);
   const [onWaitingConfirmation, setOnWaitingConfirmation] = useState(false);
 
-  useEffect(() => {
-    (async () => {
-      const response = await fetch(`${api.http}/api/game`);
-
-      if (response.ok) {
-        const currentGame = await response.text();
-        setCurrentGame(currentGame);
-      }
-    })();
+  useAsync(async () => {
+    const { game } = await GameService.currentGame(authToken);
+    setCurrentGame(game);
   }, []);
 
   const doQueue = () => {
+    if (!stompClient) return;
+
     const stompSub = stompClient?.subscribe('/topic/queue', (message) => {
       const content = JSON.parse(message.body) as QueueMessage;
 

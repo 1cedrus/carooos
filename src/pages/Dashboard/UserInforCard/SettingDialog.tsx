@@ -7,7 +7,7 @@ import Button from '@/components/custom/Button.tsx';
 
 export default function SettingDialog() {
   const [open, setOpen] = useState(false);
-  const { doLogout } = useAuthenticationContext();
+  const { logOut } = useAuthenticationContext();
 
   useEffect(() => {
     const showDialog = () => setOpen(true);
@@ -29,7 +29,7 @@ export default function SettingDialog() {
         <DialogContentText></DialogContentText>
       </DialogContent>
       <DialogActions>
-        <Button onClick={doLogout}>Logout</Button>
+        <Button onClick={logOut}>Logout</Button>
       </DialogActions>
     </Dialog>
   );

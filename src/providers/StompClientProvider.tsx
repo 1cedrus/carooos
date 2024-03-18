@@ -15,34 +15,32 @@ export const useStompClientContext = () => {
 };
 
 export default function StompClientProvider({ children }: Props) {
-  const { jsonWebToken } = useAuthenticationContext();
+  const { isAuthenticated, authToken } = useAuthenticationContext();
   const [stompClient, setStompClient] = useState<CompatClient>();
 
   useEffect(() => {
-    if (jsonWebToken) {
-      console.log(jsonWebToken);
+    if (!isAuthenticated) return;
 
-      const stompClient = Stomp.client(api.ws);
-      stompClient.connect(
-        {
-          Authorization: `Bearer ${jsonWebToken}`,
-        },
-        () => {
-          stompClient.subscribe('/user/topic/messages', (message) => {
-            console.log(message.body);
-          });
-          console.log('WebSocket established!');
-        },
-      );
+    const stompClient = Stomp.client(api.ws);
+    stompClient.connect(
+      {
+        Authorization: `Bearer ${authToken}`,
+      },
+      () => {
+        stompClient.subscribe('/user/topic/messages', (message) => {
+          console.log(message.body);
+        });
+        console.log('WebSocket established!');
+      },
+    );
 
-      // Intend to make component re-render in-time
-      setTimeout(() => setStompClient(stompClient), 1000);
-    }
+    // Intend to make component re-render in-time
+    setTimeout(() => setStompClient(stompClient), 1000);
 
     return () => {
       stompClient?.disconnect();
     };
-  }, [jsonWebToken]);
+  }, [isAuthenticated]);
 
   return <StompClientContext.Provider value={{ stompClient }}>{children}</StompClientContext.Provider>;
 }

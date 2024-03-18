@@ -10,4 +10,6 @@ export enum EventName {
   OpenInforSnackBar = 'OpenInforSnackBar',
   OpenSettingsDialog = 'OpenSettingsDialog',
   OpenWinnerAnnouncementModal = 'OpenWinnerAnnouncementModal',
+
+  ReloadInfo = 'ReloadInfo',
 }

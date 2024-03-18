@@ -63,8 +63,8 @@ export interface FinishMessage extends GameMessage {
 }
 
 export interface PublicInformation {
-  username?: string;
-  elo?: number;
+  username: string;
+  elo: number;
 }
 
 export enum FriendsMessageType {
