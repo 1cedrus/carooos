@@ -8,7 +8,7 @@ import { topics } from '@/utils/topics.ts';
 import MessageOutlinedIcon from '@mui/icons-material/MessageOutlined';
 
 export default function MessageButton() {
-  const { id } = useGameContext();
+  const { roomCode } = useGameContext();
   const { stompClient } = useStompClientContext();
   const { username } = useUserInformationContext();
   const [message, setMessage] = useState<string>();
@@ -23,7 +23,7 @@ export default function MessageButton() {
       sender: username,
       content: message,
     };
-    stompClient?.send(topics.GAME(id), {}, JSON.stringify(sendMessage));
+    stompClient?.send(topics.GAME(roomCode), {}, JSON.stringify(sendMessage));
 
     setMessage('');
   };
@@ -38,7 +38,9 @@ export default function MessageButton() {
           placeholder='messagezz go here'
           size='small'
         />
-        <IconButton sx={{ color: 'black', borderRadius: '5px', border: '1px solid gray', p: '0.25rem', px: '0.4rem' }}>
+        <IconButton
+          type='submit'
+          sx={{ color: 'black', borderRadius: '5px', border: '1px solid gray', p: '0.25rem', px: '0.4rem' }}>
           <MessageOutlinedIcon />
         </IconButton>
       </Box>

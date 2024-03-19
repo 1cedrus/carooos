@@ -28,7 +28,7 @@ export default function AuthenticationProvider({ children }: Props) {
     try {
       setAuthToken((await AuthService.signIn(credential)).token);
     } catch (_) {
-      triggerEvent(EventName.OpenInforSnackBar, 'userz or password is wrong!');
+      triggerEvent(EventName.OpenInfoSnackBar, 'userz or password is wrong!');
     }
   };
 
@@ -36,7 +36,7 @@ export default function AuthenticationProvider({ children }: Props) {
     try {
       setAuthToken((await AuthService.signUp(registerCredential)).token);
     } catch (_) {
-      triggerEvent(EventName.OpenInforSnackBar, 'userz or password is wrong!');
+      triggerEvent(EventName.OpenInfoSnackBar, 'userz or password is wrong!');
     }
   };
 

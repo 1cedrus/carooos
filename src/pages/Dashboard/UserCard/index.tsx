@@ -1,19 +1,19 @@
 import { Avatar, Box, Grow, IconButton, useMediaQuery } from '@mui/material';
 import { useUserInformationContext } from '@/providers/UserInformationProvider.tsx';
-import FriendsBox from '@/pages/Dashboard/UserInfoCard/FriendsBox';
+import FriendsBox from '@/pages/Dashboard/UserCard/FriendsBox';
 import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
 import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
 import PeopleOutlineOutlinedIcon from '@mui/icons-material/PeopleOutlineOutlined';
 import MessageOutlinedIcon from '@mui/icons-material/MessageOutlined';
 import { useState } from 'react';
-import MessagesBox from '@/pages/Dashboard/UserInfoCard/MessagesBox';
+import MessagesBox from '@/pages/Dashboard/UserCard/MessagesBox';
 
 enum Tab {
   Friends,
   Messages,
 }
 
-export default function UserInfoCard() {
+export default function UserCard() {
   const { doLogout } = useAuthenticationContext();
   const { username, elo } = useUserInformationContext();
   const [tab, setTab] = useState<Tab>(Tab.Friends);
@@ -33,24 +33,26 @@ export default function UserInfoCard() {
               {elo}
             </Box>
           </Box>
-          <IconButton
-            onClick={() => setTab(Tab.Messages)}
-            size={largeScreen ? 'medium' : 'small'}
-            sx={{ color: 'black', border: '2px solid black' }}>
-            <MessageOutlinedIcon fontSize={largeScreen ? 'medium' : 'small'} />
-          </IconButton>
-          <IconButton
-            onClick={() => setTab(Tab.Friends)}
-            size={largeScreen ? 'medium' : 'small'}
-            sx={{ color: 'black', border: '2px solid black' }}>
-            <PeopleOutlineOutlinedIcon fontSize={largeScreen ? 'medium' : 'small'} />
-          </IconButton>
-          <IconButton
-            onClick={doLogout}
-            size={largeScreen ? 'medium' : 'small'}
-            sx={{ color: 'black', border: '2px solid black' }}>
-            <ExitToAppOutlinedIcon fontSize={largeScreen ? 'medium' : 'small'} />
-          </IconButton>
+          <Box className='flex items-center gap-2'>
+            <IconButton
+              onClick={() => setTab(Tab.Messages)}
+              size={largeScreen ? 'medium' : 'small'}
+              sx={{ color: 'black', border: '2px solid black' }}>
+              <MessageOutlinedIcon fontSize={largeScreen ? 'medium' : 'small'} />
+            </IconButton>
+            <IconButton
+              onClick={() => setTab(Tab.Friends)}
+              size={largeScreen ? 'medium' : 'small'}
+              sx={{ color: 'black', border: '2px solid black' }}>
+              <PeopleOutlineOutlinedIcon fontSize={largeScreen ? 'medium' : 'small'} />
+            </IconButton>
+            <IconButton
+              onClick={doLogout}
+              size={largeScreen ? 'medium' : 'small'}
+              sx={{ color: 'black', border: '2px solid black' }}>
+              <ExitToAppOutlinedIcon fontSize={largeScreen ? 'medium' : 'small'} />
+            </IconButton>
+          </Box>
         </Box>
         {tab === Tab.Friends && <FriendsBox />}
         {tab === Tab.Messages && <MessagesBox />}

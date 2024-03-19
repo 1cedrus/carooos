@@ -1,9 +1,9 @@
 import { Box } from '@mui/material';
 import { useUserInformationContext } from '@/providers/UserInformationProvider.tsx';
-import FriendCard from '@/pages/Dashboard/UserInfoCard/FriendCard.tsx';
+import FriendCard from '@/pages/Dashboard/UserCard/FriendCard.tsx';
 import MessageOutlinedIcon from '@mui/icons-material/MessageOutlined';
 import { useState } from 'react';
-import ChatBox from '@/pages/Dashboard/UserInfoCard/MessagesBox/ChatBox.tsx';
+import ChatBox from '@/pages/Dashboard/UserCard/MessagesBox/ChatBox.tsx';
 
 export default function MessagesBox() {
   const { friends } = useUserInformationContext();

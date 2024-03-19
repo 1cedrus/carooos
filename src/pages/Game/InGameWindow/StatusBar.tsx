@@ -9,7 +9,7 @@ export default function StatusBar() {
   const { nextMove, firstUser, secondUser, inGameChat } = useGameContext();
 
   return (
-    <Box className=''>
+    <Box>
       <Box className='flex justify-between items-center gap-4 md:gap-14'>
         <Box className='relative'>
           <User username={firstUser} />

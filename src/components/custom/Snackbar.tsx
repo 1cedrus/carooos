@@ -13,10 +13,10 @@ export default function Snackbar() {
       setAction(action);
       setOpen(true);
     };
-    eventEmitter.on(EventName.OpenInforSnackBar, showBar);
+    eventEmitter.on(EventName.OpenInfoSnackBar, showBar);
 
     return () => {
-      eventEmitter.off(EventName.OpenInforSnackBar, showBar);
+      eventEmitter.off(EventName.OpenInfoSnackBar, showBar);
     };
   }, []);
 

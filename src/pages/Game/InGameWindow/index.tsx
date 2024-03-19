@@ -1,13 +1,14 @@
 import { Box, LinearProgress } from '@mui/material';
 import StatusBar from '@/pages/Game/InGameWindow/StatusBar.tsx';
-import CaroTable from '@/pages/Game/InGameWindow/CaroTable.tsx';
+import CaroTable from '@/components/shared/CaroTable.tsx';
 import MessageButton from '@/pages/Game/InGameWindow/MessageButton.tsx';
-import WinnerAnnouncement from '@/pages/Game/InGameWindow/WinnerAnnouncement.tsx';
+import WinnerAnnouncement from '@/components/shared/WinnerAnnouncement.tsx';
 import { useEffect, useState } from 'react';
 import { useGameContext } from '@/providers/GameProvider.tsx';
+import DrawAnnouncement from '@/components/shared/DrawAnnouncement.tsx';
 
 export default function InGameWindow() {
-  const { nextMove } = useGameContext();
+  const { nextMove, currentMoves, doMove } = useGameContext();
   const [time, setTime] = useState(100);
 
   useEffect(() => {
@@ -31,12 +32,13 @@ export default function InGameWindow() {
             <LinearProgress color='inherit' value={time} variant='determinate' />
           </Box>
           <Box className='flex-initial border-2 border-black rounded'>
-            <CaroTable />
+            <CaroTable currentMoves={currentMoves} doMove={doMove} />
           </Box>
         </Box>
         <MessageButton />
       </Box>
       <WinnerAnnouncement />
+      <DrawAnnouncement />
     </>
   );
 }

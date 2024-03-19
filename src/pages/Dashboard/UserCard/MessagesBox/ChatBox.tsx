@@ -5,7 +5,7 @@ import ChatService from '@/services/ChatService.ts';
 import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
 import useAsync from '@/hooks/useAsync.ts';
 import { Box, Divider, IconButton, InputAdornment, OutlinedInput } from '@mui/material';
-import Message from '@/pages/Dashboard/UserInfoCard/MessagesBox/Message.tsx';
+import Message from '@/pages/Dashboard/UserCard/MessagesBox/Message.tsx';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
 import { useStompClientContext } from '@/providers/StompClientProvider.tsx';

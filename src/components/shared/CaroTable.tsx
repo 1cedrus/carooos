@@ -1,9 +1,9 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { Box, useMediaQuery } from '@mui/material';
 import Cross from '@/assets/cross.png';
 import Nought from '@/assets/nought.png';
-import { useGameContext } from '@/providers/GameProvider.tsx';
-import { EventName, triggerEvent } from '@/utils/eventemitter.ts';
+import { Props } from '@/types.ts';
+import { getLast } from '@/utils/number.ts';
 
 const crossImage = new Image();
 crossImage.src = Cross;
@@ -11,47 +11,21 @@ crossImage.src = Cross;
 const noughtImage = new Image();
 noughtImage.src = Nought;
 
-export default function CaroTable() {
-  const { doMove, currentMoves, winner, isDraw } = useGameContext();
+interface CaroTableProps extends Props {
+  doMove: (move: number) => void;
+  currentMoves: number[];
+}
+
+export default function CaroTable({ doMove, currentMoves }: CaroTableProps) {
+  const [waitMove, setWaitMove] = useState<number>();
   const largeScreen = useMediaQuery('(min-width:640px)');
 
-  useEffect(() => {
-    if (!winner && !isDraw) return;
-
-    triggerEvent(EventName.OpenWinnerAnnouncementModal);
-  }, [winner]);
-
-  useEffect(() => {
-    if (currentMoves?.length === 0) return;
-
-    const canvas = document.getElementById('layer-1') as HTMLCanvasElement;
-    const canvasLayer2 = document.getElementById('layer-2') as HTMLCanvasElement;
-    const context = canvas.getContext('2d');
-    const contextLayer2 = canvasLayer2.getContext('2d');
-
-    if (!context || !contextLayer2) {
-      console.log('Error occupied!');
-      return;
-    }
-
-    currentMoves?.forEach((move, idx) => {
-      const x = Math.floor(move % 20);
-      const y = Math.floor(move / 20);
-
-      if (idx % 2 === 0) {
-        context.drawImage(crossImage, x * 50 + 5, y * 50 + 5, 40, 40);
-      } else context.drawImage(noughtImage, x * 50 + 5, y * 50 + 5, 40, 40);
-    });
-  }, [currentMoves]);
-
+  // Draw caro table
   useEffect(() => {
     const canvas = document.getElementById('layer-1') as HTMLCanvasElement;
     const context = canvas.getContext('2d');
 
-    if (!context) {
-      console.log('Error occupied!');
-      return;
-    }
+    if (!context) return;
 
     context.fillStyle = '#fff';
     context.fillRect(0, 0, 1000, 1000);
@@ -70,16 +44,35 @@ export default function CaroTable() {
     }
 
     context.stroke();
-  }, []);
+  }, [currentMoves]);
 
+  // Draw current moves
+  useEffect(() => {
+    if (!currentMoves.length) return;
+
+    const canvas = document.getElementById('layer-1') as HTMLCanvasElement;
+    const context = canvas.getContext('2d');
+
+    if (!context) return;
+
+    currentMoves.forEach((move, idx) => {
+      const x = Math.floor(move % 20);
+      const y = Math.floor(move / 20);
+
+      if (idx % 2 === 0) {
+        context.drawImage(crossImage, x * 50 + 5, y * 50 + 5, 40, 40);
+      } else {
+        context.drawImage(noughtImage, x * 50 + 5, y * 50 + 5, 40, 40);
+      }
+    });
+  }, [currentMoves]);
+
+  // Highlight last move, on wait move and highlight current spot based on mouse
   const handleMouseMove = (event: any) => {
     const canvas = document.getElementById('layer-2') as HTMLCanvasElement;
     const context = canvas.getContext('2d');
 
-    if (!context) {
-      console.log('Error occupied!');
-      return;
-    }
+    if (!context) return;
 
     context.clearRect(0, 0, 1000, 1000);
 
@@ -96,10 +89,16 @@ export default function CaroTable() {
     context.fillStyle = 'rgba(218,178,218,0.5)';
     context.fillRect(x * 50, y * 50, 50, 50);
 
-    // Draw last mark spot
+    // Highlight last move
     if (!currentMoves) return;
-    x = Math.floor(currentMoves[currentMoves?.length - 1] % 20);
-    y = Math.floor(currentMoves[currentMoves?.length - 1] / 20);
+    x = Math.floor(getLast(currentMoves) % 20);
+    y = Math.floor(getLast(currentMoves) / 20);
+
+    context.fillRect(x * 50, y * 50, 50, 50);
+
+    if (!waitMove) return;
+    x = Math.floor(waitMove % 20);
+    y = Math.floor(waitMove / 20);
 
     context.fillRect(x * 50, y * 50, 50, 50);
   };
@@ -117,7 +116,13 @@ export default function CaroTable() {
       y = Math.floor((((event.clientY - pos.y) / 400) * 1000) / 50);
     }
 
-    doMove(20 * y + x);
+    const move = 20 * y + x;
+    if (move === waitMove) {
+      doMove(20 * y + x);
+      setWaitMove(undefined);
+    } else {
+      setWaitMove(move);
+    }
   };
 
   return (

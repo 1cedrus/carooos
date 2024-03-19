@@ -14,15 +14,13 @@ import { topics } from '@/utils/topics.ts';
 import { EventName, triggerEvent } from '@/utils/eventemitter.ts';
 
 export interface GameContext {
-  id: string;
+  roomCode: string;
   nextMove?: string;
-  currentMoves?: number[];
+  currentMoves: number[];
   firstUser: string;
   secondUser: string;
-  winner?: string;
   inGameChat?: InGameChat;
   doMove: (move: number) => void;
-  isDraw?: boolean;
 }
 
 export interface InGameChat {
@@ -37,19 +35,17 @@ export const useGameContext = () => {
 };
 
 interface GameProviderProps extends Props {
-  id: string;
+  roomCode: string;
 }
 
-export default function GameProvider({ id, children }: GameProviderProps) {
+export default function GameProvider({ roomCode, children }: GameProviderProps) {
   const { username } = useUserInformationContext();
   const { stompClient } = useStompClientContext();
   const [nextMove, setNextMove] = useState<string>();
   const [currentMoves, setCurrentMoves] = useState<number[]>([]);
-  const [winner, setWinner] = useState<string>();
-  const [isDraw, setIsDraw] = useState(false);
   const [firstUserMsg, setFirstUserMsg] = useState<string>();
   const [secondUserMsg, setSecondUserMsg] = useState<string>();
-  const [firstUser, secondUser] = id.split('-');
+  const [firstUser, secondUser] = roomCode.split('-');
 
   useEffect(() => {
     if (!stompClient || !stompClient.connected || (username !== firstUser && username !== secondUser)) return;
@@ -65,7 +61,7 @@ export default function GameProvider({ id, children }: GameProviderProps) {
     };
 
     const handleFinishMessage = (msg: FinishMessage) => {
-      setWinner(msg.winner);
+      triggerEvent(EventName.OpenWinnerAnnouncementModal, msg.winner, '/dashboard');
       triggerEvent(EventName.ReloadInfo);
     };
 
@@ -79,7 +75,7 @@ export default function GameProvider({ id, children }: GameProviderProps) {
       }
     };
 
-    const sub = stompClient.subscribe(topics.GAME(id), (message) => {
+    const sub = stompClient.subscribe(topics.GAME(roomCode), (message) => {
       const content = JSON.parse(message.body) as GameMessage;
 
       switch (content.type) {
@@ -92,11 +88,11 @@ export default function GameProvider({ id, children }: GameProviderProps) {
         case GameMessageType.InGameChat:
           return handleInGameMessage(content as InGameChatMessage);
         case GameMessageType.Draw:
-          return setIsDraw(true);
+          return triggerEvent(EventName.OpenDrawAnnouncementModal, '/dashboard');
       }
     });
 
-    stompClient.send(topics.JOIN_GAME(id));
+    stompClient.send(topics.JOIN_GAME(roomCode));
 
     return () => {
       sub.unsubscribe();
@@ -108,7 +104,7 @@ export default function GameProvider({ id, children }: GameProviderProps) {
       return;
     }
 
-    stompClient?.send(topics.PLAY_GAME(id), {}, move.toString());
+    stompClient?.send(topics.PLAY_GAME(roomCode), {}, move.toString());
   };
 
   useEffect(() => {
@@ -133,8 +129,7 @@ export default function GameProvider({ id, children }: GameProviderProps) {
   } as InGameChat;
 
   return (
-    <GameContext.Provider
-      value={{ id, nextMove, currentMoves, winner, firstUser, secondUser, doMove, inGameChat, isDraw }}>
+    <GameContext.Provider value={{ roomCode, nextMove, currentMoves, firstUser, secondUser, doMove, inGameChat }}>
       {children}
     </GameContext.Provider>
   );

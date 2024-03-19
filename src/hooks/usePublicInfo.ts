@@ -11,7 +11,7 @@ export default function usePublicInfo(username: string): PublicInformation {
     try {
       setElo((await UserService.getPublicInfo(username)).elo);
     } catch (_) {
-      triggerEvent(EventName.OpenInforSnackBar, 'Some error occurred!');
+      triggerEvent(EventName.OpenInfoSnackBar, 'Some error occurred!');
     }
   }, [username]);
 

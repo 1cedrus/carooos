@@ -7,13 +7,13 @@ import InGameWindow from '@/pages/Game/InGameWindow';
 import MatchFound from '@/pages/Game/MatchFound.tsx';
 
 export default function Game() {
-  const { id } = useParams();
+  const { roomCode } = useParams();
   const { username } = useUserInformationContext();
 
-  if (!id || !username || (username && !id.split('-').includes(username))) return <ErrorPage />;
+  if (!roomCode || !username || (username && !roomCode.split('-').includes(username))) return <ErrorPage />;
 
   return (
-    <GameProvider id={id}>
+    <GameProvider roomCode={roomCode}>
       <GameContainer />
     </GameProvider>
   );

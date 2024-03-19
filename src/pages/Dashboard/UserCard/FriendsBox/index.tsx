@@ -4,9 +4,9 @@ import { useEffect, useState } from 'react';
 import { useUserInformationContext } from '@/providers/UserInformationProvider.tsx';
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import usePublicInfos from '@/hooks/usePublicInfos.ts';
-import FriendResponseCard from '@/pages/Dashboard/UserInfoCard/FriendsBox/FriendResponseCard.tsx';
-import FriendCard from '@/pages/Dashboard/UserInfoCard/FriendCard.tsx';
-import FriendRequestCard from '@/pages/Dashboard/UserInfoCard/FriendsBox/FriendRequestCard.tsx';
+import FriendResponseCard from '@/pages/Dashboard/UserCard/FriendsBox/FriendResponseCard.tsx';
+import FriendCard from '@/pages/Dashboard/UserCard/FriendCard.tsx';
+import FriendRequestCard from '@/pages/Dashboard/UserCard/FriendsBox/FriendRequestCard.tsx';
 import { FriendsMessage, FriendsMessageType, Props } from '@/types.ts';
 import { EventName, triggerEvent } from '@/utils/eventemitter.ts';
 import { useStompClientContext } from '@/providers/StompClientProvider.tsx';
@@ -44,18 +44,18 @@ export default function FriendsBox() {
         case FriendsMessageType.FriendResponse:
           return (() => {
             triggerEvent(EventName.ReloadInfo);
-            triggerEvent(EventName.OpenInforSnackBar, `${username} accepted your friend request!`);
+            triggerEvent(EventName.OpenInfoSnackBar, `${username} accepted your friend request!`);
           })();
         case FriendsMessageType.InviteRequest:
           return triggerEvent(
-            EventName.OpenInforSnackBar,
+            EventName.OpenInfoSnackBar,
             `${content.username} want to play with youu!!!`,
             <AcceptButton acceptAction={() => doAccept(content.username)} />,
           );
         case FriendsMessageType.InviteResponse:
           return (() => {
             navigate(`/game/${username}-${content.username}`);
-            triggerEvent(EventName.OpenInforSnackBar, `${content.username} accepted your invite!`);
+            triggerEvent(EventName.OpenInfoSnackBar, `${content.username} accepted your invite!`);
           })();
       }
     });

@@ -13,7 +13,7 @@ export default function MatchFound() {
 
   useEffect(() => {
     if (progress >= 200) {
-      triggerEvent(EventName.OpenInforSnackBar, 'There some error is occurred');
+      triggerEvent(EventName.OpenInfoSnackBar, 'There some error is occurred');
       navigate('/dashboard');
     }
   }, [progress]);

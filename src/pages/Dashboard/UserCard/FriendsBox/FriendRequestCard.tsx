@@ -20,7 +20,7 @@ export default function FriendRequestCard({ username, elo }: FriendRequestCardPr
     if (await FriendsService.send(username, authToken)) {
       setRequested(true);
     } else {
-      triggerEvent(EventName.OpenInforSnackBar, 'Some error occurred!');
+      triggerEvent(EventName.OpenInfoSnackBar, 'Some error occurred!');
     }
   };
 
