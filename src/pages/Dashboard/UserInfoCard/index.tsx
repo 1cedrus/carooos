@@ -3,10 +3,20 @@ import { useUserInformationContext } from '@/providers/UserInformationProvider.t
 import FriendsBox from '@/pages/Dashboard/UserInfoCard/FriendsBox';
 import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
 import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
+import PeopleOutlineOutlinedIcon from '@mui/icons-material/PeopleOutlineOutlined';
+import MessageOutlinedIcon from '@mui/icons-material/MessageOutlined';
+import { useState } from 'react';
+import MessagesBox from '@/pages/Dashboard/UserInfoCard/MessagesBox';
+
+enum Tab {
+  Friends,
+  Messages,
+}
 
 export default function UserInfoCard() {
   const { doLogout } = useAuthenticationContext();
   const { username, elo } = useUserInformationContext();
+  const [tab, setTab] = useState<Tab>(Tab.Friends);
   const largeScreen = useMediaQuery('(min-width:640px)');
 
   return (
@@ -24,13 +34,26 @@ export default function UserInfoCard() {
             </Box>
           </Box>
           <IconButton
+            onClick={() => setTab(Tab.Messages)}
+            size={largeScreen ? 'medium' : 'small'}
+            sx={{ color: 'black', border: '2px solid black' }}>
+            <MessageOutlinedIcon fontSize={largeScreen ? 'medium' : 'small'} />
+          </IconButton>
+          <IconButton
+            onClick={() => setTab(Tab.Friends)}
+            size={largeScreen ? 'medium' : 'small'}
+            sx={{ color: 'black', border: '2px solid black' }}>
+            <PeopleOutlineOutlinedIcon fontSize={largeScreen ? 'medium' : 'small'} />
+          </IconButton>
+          <IconButton
             onClick={doLogout}
             size={largeScreen ? 'medium' : 'small'}
             sx={{ color: 'black', border: '2px solid black' }}>
             <ExitToAppOutlinedIcon fontSize={largeScreen ? 'medium' : 'small'} />
           </IconButton>
         </Box>
-        <FriendsBox />
+        {tab === Tab.Friends && <FriendsBox />}
+        {tab === Tab.Messages && <MessagesBox />}
       </Box>
     </Grow>
   );

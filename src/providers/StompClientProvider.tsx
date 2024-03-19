@@ -28,7 +28,7 @@ export default function StompClientProvider({ children }: Props) {
         Authorization: `Bearer ${authToken}`,
       },
       () => {
-        stompClient.subscribe(topics.FRIENDS, (message) => {
+        stompClient.subscribe(topics.MESSAGES, (message) => {
           console.log(message.body);
         });
 

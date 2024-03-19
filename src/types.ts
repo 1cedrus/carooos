@@ -35,7 +35,7 @@ export enum GameMessageType {
   Move = 'Move',
   Join = 'Join',
   Finish = 'Finish',
-  Messages = 'Messages',
+  InGameChat = 'InGameChat',
   Draw = 'Draw',
 }
 
@@ -43,7 +43,7 @@ export interface GameMessage {
   type: GameMessageType;
 }
 
-export interface MessagesMessage extends GameMessage {
+export interface InGameChatMessage extends GameMessage {
   sender: string;
   content: string;
 }
@@ -77,4 +77,11 @@ export enum FriendsMessageType {
 export interface FriendsMessage {
   type: FriendsMessageType;
   username: string;
+}
+
+export interface ChatMessage {
+  sender?: string;
+  receiver?: string;
+  content?: string;
+  timeStamp?: string;
 }

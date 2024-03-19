@@ -5,13 +5,14 @@ import { useUserInformationContext } from '@/providers/UserInformationProvider.t
 import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import usePublicInfos from '@/hooks/usePublicInfos.ts';
 import FriendResponseCard from '@/pages/Dashboard/UserInfoCard/FriendsBox/FriendResponseCard.tsx';
-import FriendCard from '@/pages/Dashboard/UserInfoCard/FriendsBox/FriendCard.tsx';
+import FriendCard from '@/pages/Dashboard/UserInfoCard/FriendCard.tsx';
 import FriendRequestCard from '@/pages/Dashboard/UserInfoCard/FriendsBox/FriendRequestCard.tsx';
 import { FriendsMessage, FriendsMessageType, Props } from '@/types.ts';
 import { EventName, triggerEvent } from '@/utils/eventemitter.ts';
 import { useStompClientContext } from '@/providers/StompClientProvider.tsx';
 import { useNavigate } from 'react-router-dom';
 import { topics } from '@/utils/topics.ts';
+import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 
 enum FriendsMode {
   View,
@@ -77,6 +78,19 @@ export default function FriendsBox() {
     navigate(`/game/${responseUser}-${username}`);
   };
 
+  const doInvite = async (friend: string) => {
+    if (!stompClient || !stompClient.connected) return;
+
+    stompClient.send(
+      `/user/${friend}/topic/friends`,
+      {},
+      JSON.stringify({
+        type: FriendsMessageType.InviteRequest,
+        username,
+      }),
+    );
+  };
+
   return (
     <Box className='flex-auto flex flex-col border-black border-2 rounded p-2 gap-4 overflow-auto'>
       <Box className='flex gap-2'>
@@ -111,7 +125,14 @@ export default function FriendsBox() {
           ) : (
             <>
               {requests?.map((sender) => <FriendResponseCard key={sender} sender={sender} />)}
-              {friends?.map((friend) => <FriendCard key={friend} friend={friend} />)}
+              {friends?.map((friend) => (
+                <FriendCard
+                  key={friend}
+                  friend={friend}
+                  action={() => doInvite(friend)}
+                  actionIcon={<LocalFireDepartmentIcon fontSize='small' />}
+                />
+              ))}
             </>
           )}
         </Box>
