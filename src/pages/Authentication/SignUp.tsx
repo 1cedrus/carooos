@@ -35,7 +35,7 @@ export default function SignUp() {
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               placeholder='user'
-              helperText='must only contains a-z, A-z, _ and 4 to 16 characters'
+              helperText='must only contains a-z, A-Z, _, 0-9 and 4 to 16 characters'
               error={!!username && !/^[a-zA-Z0-9_]+$/.test(username)}
             />
             <TextField
@@ -43,7 +43,7 @@ export default function SignUp() {
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               helperText='must 5 characters or above, lest than or equal 32'
-              error={!!password && password.length < 5}
+              error={!!password && (password.length < 5 || password.length > 32)}
               placeholder='passw'
             />
             <TextField
@@ -51,7 +51,7 @@ export default function SignUp() {
               value={passwordConfirmation}
               onChange={(e) => setPasswordConfirmation(e.target.value)}
               placeholder='passw-conf'
-              error={password !== passwordConfirmation}
+              error={!!passwordConfirmation && password !== passwordConfirmation}
             />
             <Button type='submit' disabled={isError || !username || !password}>
               Sign up
