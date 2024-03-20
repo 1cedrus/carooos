@@ -9,11 +9,7 @@ export default {
     fontFamily: {
       pixel: ['Pixelify Sans', 'ui-monospace'],
     },
-    extend: {
-      backgroundImage: {
-        'xs-os': "url('./src/assets/background.png')",
-      },
-    },
+    extend: {},
   },
   plugins: [],
 };
