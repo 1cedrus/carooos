@@ -37,7 +37,13 @@ export default function UserInformationProvider({ children }: Props) {
   };
 
   useAsync(async () => {
-    if (!isAuthenticated) return;
+    if (!isAuthenticated) {
+      setUsername('');
+      setElo(0);
+      setFriends([]);
+      setRequests([]);
+      return;
+    }
 
     await doFetchInfo();
   }, [isAuthenticated]);
