@@ -6,6 +6,7 @@ import CloseOutlinedIcon from '@mui/icons-material/CloseOutlined';
 import FriendsService from '@/services/FriendsService.ts';
 import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
 import { EventName, triggerEvent } from '@/utils/eventemitter.ts';
+import { EmojiEventsOutlined } from '@mui/icons-material';
 
 interface FriendResponseCardProps extends Props {
   sender: string;
@@ -29,18 +30,19 @@ export default function FriendResponseCard({ sender }: FriendResponseCardProps) 
 
   return (
     <Grow in={true}>
-      <Box className='flex justify-between items-center p-1 pl-2 border-[1px] rounded border-amber-300'>
-        <Box component='h2' className='w-[5rem]'>
-          {username}
+      <Box className='flex justify-between items-center pl-2 border-2 border-black rounded shadow-md'>
+        <Box className='flex justify-between w-[10rem]'>
+          <Box component='h2'>{username}</Box>
+          <Box component='h4'>
+            {elo}
+            <EmojiEventsOutlined fontSize='small' />
+          </Box>
         </Box>
-        <Box component='h4' className=''>
-          {elo}
-        </Box>
-        <Box className='flex gap-2 items-center'>
-          <IconButton onClick={doAccept} sx={{ color: 'black' }}>
+        <Box className='flex  items-center'>
+          <IconButton onClick={doAccept} sx={{ color: 'black', borderRadius: 0 }}>
             <CheckOutlinedIcon fontSize='small' />
           </IconButton>
-          <IconButton onClick={doRefuse} sx={{ color: 'black' }}>
+          <IconButton onClick={doRefuse} sx={{ color: 'black', borderRadius: 0 }}>
             <CloseOutlinedIcon fontSize='small' />
           </IconButton>
         </Box>

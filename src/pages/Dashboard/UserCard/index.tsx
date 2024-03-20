@@ -1,62 +1,55 @@
-import { Avatar, Box, Grow, IconButton, useMediaQuery } from '@mui/material';
-import { useUserInformationContext } from '@/providers/UserInformationProvider.tsx';
+import { Box, Grow, IconButton, useMediaQuery } from '@mui/material';
 import FriendsBox from '@/pages/Dashboard/UserCard/FriendsBox';
 import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
 import ExitToAppOutlinedIcon from '@mui/icons-material/ExitToAppOutlined';
-import PeopleOutlineOutlinedIcon from '@mui/icons-material/PeopleOutlineOutlined';
-import MessageOutlinedIcon from '@mui/icons-material/MessageOutlined';
 import { useState } from 'react';
 import MessagesBox from '@/pages/Dashboard/UserCard/MessagesBox';
+import { GroupOutlined, PersonOutlineOutlined } from '@mui/icons-material';
+import MessageOutlinedIcon from '@mui/icons-material/MessageOutlined';
+import UserBox from '@/pages/Dashboard/UserCard/UserBox.tsx';
 
 enum Tab {
+  User,
   Friends,
   Messages,
 }
 
+const TAB_LIST = [
+  { tab: Tab.User, icon: <PersonOutlineOutlined /> },
+  { tab: Tab.Messages, icon: <MessageOutlinedIcon /> },
+  { tab: Tab.Friends, icon: <GroupOutlined /> },
+];
+
 export default function UserCard() {
   const { doLogout } = useAuthenticationContext();
-  const { username, elo } = useUserInformationContext();
-  const [tab, setTab] = useState<Tab>(Tab.Friends);
+  const [currentTab, setCurrentTab] = useState<Tab>(Tab.User);
   const largeScreen = useMediaQuery('(min-width:640px)');
 
   return (
-    <Grow in={true}>
-      <Box className='flex flex-col gap-8 h-1/2 lg:h-[30rem] w-full lg:w-[25rem] p-4 border-black border-2 rounded'>
-        <Box className='flex-initial flex gap-4 items-center justify-between'>
-          <Avatar
-            sx={{ width: largeScreen ? 60 : 40, height: largeScreen ? 60 : 40, border: '2px solid black' }}></Avatar>
-          <Box className='flex w-full flex-col'>
-            <Box component='h2' className='font-bold md:text-2xl'>
-              {username}
-            </Box>
-            <Box component='h2' className='font-bold md:text-2xl'>
-              {elo}
-            </Box>
-          </Box>
-          <Box className='flex items-center gap-2'>
-            <IconButton
-              onClick={() => setTab(Tab.Messages)}
-              size={largeScreen ? 'medium' : 'small'}
-              sx={{ color: 'black', border: '2px solid black' }}>
-              <MessageOutlinedIcon fontSize={largeScreen ? 'medium' : 'small'} />
-            </IconButton>
-            <IconButton
-              onClick={() => setTab(Tab.Friends)}
-              size={largeScreen ? 'medium' : 'small'}
-              sx={{ color: 'black', border: '2px solid black' }}>
-              <PeopleOutlineOutlinedIcon fontSize={largeScreen ? 'medium' : 'small'} />
-            </IconButton>
-            <IconButton
-              onClick={doLogout}
-              size={largeScreen ? 'medium' : 'small'}
-              sx={{ color: 'black', border: '2px solid black' }}>
-              <ExitToAppOutlinedIcon fontSize={largeScreen ? 'medium' : 'small'} />
-            </IconButton>
-          </Box>
-        </Box>
-        {tab === Tab.Friends && <FriendsBox />}
-        {tab === Tab.Messages && <MessagesBox />}
+    <Box className='flex gap-2'>
+      <Box className='flex flex-col items-center gap-2 p-2 border-2 border-black rounded-2xl h-fit'>
+        {TAB_LIST.map(({ tab, icon }) => (
+          <IconButton
+            onClick={() => setCurrentTab(tab)}
+            size={largeScreen ? 'medium' : 'small'}
+            sx={{ color: 'black', border: `2px ${currentTab === tab ? 'solid' : 'dashed'} black` }}>
+            {icon}
+          </IconButton>
+        ))}
+        <IconButton
+          onClick={doLogout}
+          size={largeScreen ? 'medium' : 'small'}
+          sx={{ color: 'black', border: `2px dashed black` }}>
+          <ExitToAppOutlinedIcon fontSize={largeScreen ? 'medium' : 'small'} />
+        </IconButton>
       </Box>
-    </Grow>
+      <Grow in={true}>
+        <Box className='flex flex-col gap-8 h-1/2 lg:h-[30rem] w-full lg:w-[25rem] p-4 border-black border-2 rounded'>
+          {currentTab === Tab.Friends && <FriendsBox />}
+          {currentTab === Tab.Messages && <MessagesBox />}
+          {currentTab === Tab.User && <UserBox />}
+        </Box>
+      </Grow>
+    </Box>
   );
 }

@@ -6,6 +6,7 @@ import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutli
 import FriendsService from '@/services/FriendsService.ts';
 import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
 import { toast } from 'react-toastify';
+import { EmojiEventsOutlined } from '@mui/icons-material';
 
 interface FriendRequestCardProps extends Props {
   username: string;
@@ -26,12 +27,13 @@ export default function FriendRequestCard({ username, elo }: FriendRequestCardPr
 
   return (
     <Grow in={true}>
-      <Box className='flex justify-between items-center p-1 pl-2 border-[1px] rounded'>
-        <Box component='h2' className='w-[5rem]'>
-          {username}
-        </Box>
-        <Box component='h4' className=''>
-          {elo}
+      <Box className='flex justify-between items-center pl-2 border-[1px] rounded'>
+        <Box className='flex justify-between w-[10rem]'>
+          <Box component='h2'>{username}</Box>
+          <Box component='h4'>
+            {elo}
+            <EmojiEventsOutlined fontSize='small' />
+          </Box>
         </Box>
         <Box className='flex gap-2 items-center'>
           {requested ? (
@@ -39,7 +41,7 @@ export default function FriendRequestCard({ username, elo }: FriendRequestCardPr
               <CheckCircleOutlineOutlinedIcon />
             </IconButton>
           ) : (
-            <IconButton onClick={doSendRequest} sx={{ color: 'black' }}>
+            <IconButton onClick={doSendRequest} sx={{ color: 'black', borderRadius: 0 }}>
               <AddOutlinedIcon />
             </IconButton>
           )}

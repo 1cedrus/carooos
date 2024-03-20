@@ -81,7 +81,7 @@ export default function ChatBox({ target, resetTarget }: ChatBoxProps) {
         </IconButton>
       </Box>
       <Divider />
-      <Box ref={ref} className='flex-auto flex flex-col gap-2 overflow-auto pr-2'>
+      <Box ref={ref} className='flex-auto flex flex-col gap-2 overflow-auto p-2'>
         {currentMsgs.map(({ content, timeStamp, sender }) => (
           <Message
             key={content! + timeStamp!}
