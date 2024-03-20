@@ -1,10 +1,10 @@
 export const api: Record<string, string> = {
-  http: 'http://localhost:9000',
-  ws: 'ws://localhost:9000/ws',
+  http: 'https://api.1cedrus.id.vn:9000',
+  ws: 'wss://api.1cedrus.id.vn:9000/ws',
 };
 
-export const HTTP = 'http://localhost:9000';
-export const WS = 'ws://localhost:9000/ws';
+export const HTTP = api.http;
+export const WS = api.ws;
 
 export const SIGNUP_URL = `${HTTP}/api/auth/register`;
 export const SIGNIN_URL = `${HTTP}/api/auth/authenticate`;
