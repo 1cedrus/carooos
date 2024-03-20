@@ -1,7 +1,7 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { Props } from '@/types.ts';
 import AuthService, { Credential } from '@/services/AuthService.ts';
-import { EventName, triggerEvent } from '@/utils/eventemitter.ts';
+import { toast } from 'react-toastify';
 
 interface AuthenticationContext {
   authToken: string;
@@ -28,7 +28,7 @@ export default function AuthenticationProvider({ children }: Props) {
     try {
       setAuthToken((await AuthService.signIn(credential)).token);
     } catch (_) {
-      triggerEvent(EventName.OpenInfoSnackBar, 'userz or password is wrong!');
+      toast.error('userz or password is wrong!');
     }
   };
 
@@ -36,7 +36,7 @@ export default function AuthenticationProvider({ children }: Props) {
     try {
       setAuthToken((await AuthService.signUp(registerCredential)).token);
     } catch (_) {
-      triggerEvent(EventName.OpenInfoSnackBar, 'userz or password is wrong!');
+      toast.error('userz is already existed!!');
     }
   };
 

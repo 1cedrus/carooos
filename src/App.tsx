@@ -6,7 +6,7 @@ import UserInformationProvider from '@/providers/UserInformationProvider.tsx';
 import { CssBaseline, GlobalStyles, ThemeProvider } from '@mui/material';
 import { theme } from '@/styles/theme.ts';
 import { globalStyles } from '@/styles';
-import Snackbar from '@/components/custom/Snackbar.tsx';
+import { ToastContainer } from 'react-toastify';
 
 export default function App() {
   return (
@@ -17,7 +17,13 @@ export default function App() {
             <CssBaseline />
             <GlobalStyles styles={globalStyles} />
             <RouterProvider router={router} />
-            <Snackbar />
+            <ToastContainer
+              toastClassName='border-2 border-black'
+              position='top-center'
+              autoClose={3000}
+              newestOnTop
+              closeOnClick
+            />
           </ThemeProvider>
         </UserInformationProvider>
       </StompClientProvider>

@@ -3,8 +3,8 @@ import { Box, Grow, LinearProgress } from '@mui/material';
 import User from '@/components/shared/User.tsx';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import { useEffect, useState } from 'react';
-import { EventName, triggerEvent } from '@/utils/eventemitter.ts';
 import { useNavigate } from 'react-router-dom';
+import { toast } from 'react-toastify';
 
 export default function MatchFound() {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ export default function MatchFound() {
 
   useEffect(() => {
     if (progress >= 200) {
-      triggerEvent(EventName.OpenInfoSnackBar, 'There some error is occurred');
+      toast.error('There are some errors occurred!');
       navigate('/dashboard');
     }
   }, [progress]);

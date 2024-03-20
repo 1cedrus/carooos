@@ -7,7 +7,6 @@ export const triggerEvent = (name: EventName, ...args: any[]) => {
 };
 
 export enum EventName {
-  OpenInfoSnackBar = 'OpenInfoSnackBar',
   OpenWinnerAnnouncementModal = 'OpenWinnerAnnouncementModal',
   OpenDrawAnnouncementModal = 'OpenDrawAnnouncementModal',
 

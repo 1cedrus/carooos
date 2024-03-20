@@ -1,4 +1,4 @@
-import { Box, Button, IconButton, TextField } from '@mui/material';
+import { Box, IconButton, TextField } from '@mui/material';
 import AddOutlinedIcon from '@mui/icons-material/AddOutlined';
 import { useEffect, useState } from 'react';
 import { useUserInformationContext } from '@/providers/UserInformationProvider.tsx';
@@ -7,12 +7,14 @@ import usePublicInfos from '@/hooks/usePublicInfos.ts';
 import FriendResponseCard from '@/pages/Dashboard/UserCard/FriendsBox/FriendResponseCard.tsx';
 import FriendCard from '@/pages/Dashboard/UserCard/FriendCard.tsx';
 import FriendRequestCard from '@/pages/Dashboard/UserCard/FriendsBox/FriendRequestCard.tsx';
-import { FriendsMessage, FriendsMessageType, Props } from '@/types.ts';
+import { FriendsMessage, FriendsMessageType } from '@/types.ts';
 import { EventName, triggerEvent } from '@/utils/eventemitter.ts';
 import { useStompClientContext } from '@/providers/StompClientProvider.tsx';
 import { useNavigate } from 'react-router-dom';
 import { topics } from '@/utils/topics.ts';
 import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
+import { toast } from 'react-toastify';
+import GroupIcon from '@mui/icons-material/Group';
 
 enum FriendsMode {
   View,
@@ -44,18 +46,47 @@ export default function FriendsBox() {
         case FriendsMessageType.FriendResponse:
           return (() => {
             triggerEvent(EventName.ReloadInfo);
-            triggerEvent(EventName.OpenInfoSnackBar, `${username} accepted your friend request!`);
+            toast(
+              <Box className='flex items-center gap-4 text-black'>
+                <Box>
+                  <GroupIcon />
+                </Box>
+                <Box>
+                  <strong>{content.username}</strong> accepted your friend request!
+                </Box>
+              </Box>,
+            );
           })();
         case FriendsMessageType.InviteRequest:
-          return triggerEvent(
-            EventName.OpenInfoSnackBar,
-            `${content.username} want to play with youu!!!`,
-            <AcceptButton acceptAction={() => doAccept(content.username)} />,
+          return toast(
+            <Box className='flex items-center gap-4 text-black'>
+              <Box>
+                <LocalFireDepartmentIcon />
+              </Box>
+              <Box>
+                <strong>{content.username}</strong> want to play with youu!!! <strong>Tap to accept!</strong>
+              </Box>
+            </Box>,
+            {
+              onClick: () => doAccept(content.username),
+              hideProgressBar: false,
+              autoClose: 5000,
+            },
           );
+
         case FriendsMessageType.InviteResponse:
           return (() => {
             navigate(`/game/${username}-${content.username}`);
-            triggerEvent(EventName.OpenInfoSnackBar, `${content.username} accepted your invite!`);
+            toast(
+              <Box className='flex items-center gap-4 text-black'>
+                <Box>
+                  <LocalFireDepartmentIcon />
+                </Box>
+                <Box>
+                  <strong>{content.username}</strong> accepted your request!
+                </Box>
+              </Box>,
+            );
           })();
       }
     });
@@ -138,17 +169,5 @@ export default function FriendsBox() {
         </Box>
       </Box>
     </Box>
-  );
-}
-
-interface AcceptButtonProps extends Props {
-  acceptAction: () => void;
-}
-
-function AcceptButton({ acceptAction }: AcceptButtonProps) {
-  return (
-    <Button variant='contained' sx={{ color: 'white' }} onClick={acceptAction}>
-      Accept
-    </Button>
   );
 }

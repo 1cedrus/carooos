@@ -5,7 +5,7 @@ import { useState } from 'react';
 import CheckCircleOutlineOutlinedIcon from '@mui/icons-material/CheckCircleOutlineOutlined';
 import FriendsService from '@/services/FriendsService.ts';
 import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
-import { EventName, triggerEvent } from '@/utils/eventemitter.ts';
+import { toast } from 'react-toastify';
 
 interface FriendRequestCardProps extends Props {
   username: string;
@@ -20,7 +20,7 @@ export default function FriendRequestCard({ username, elo }: FriendRequestCardPr
     if (await FriendsService.send(username, authToken)) {
       setRequested(true);
     } else {
-      triggerEvent(EventName.OpenInfoSnackBar, 'Some error occurred!');
+      toast.error('Some error occurred!');
     }
   };
 
