@@ -138,6 +138,7 @@ function FriendDispatcher({ mode, query }: FriendDispatcherProps) {
   const { stompClient } = useStompClientContext();
   const { username, friends = [], requests = [] } = useUserInformationContext();
   const [searchUsers, setSearchUsers] = useState<PublicInformation[]>([]);
+  const [onInvite, setOnInvite] = useState(false);
 
   useEffect(() => {
     if (mode !== FriendsMode.Add) return;
@@ -160,7 +161,7 @@ function FriendDispatcher({ mode, query }: FriendDispatcherProps) {
   }, [query]);
 
   const doInvite = async (friend: string) => {
-    if (!stompClient || !stompClient.connected) return;
+    if (onInvite || !stompClient || !stompClient.connected) return;
 
     stompClient.send(
       `/user/${friend}/topic/friends`,
@@ -170,7 +171,21 @@ function FriendDispatcher({ mode, query }: FriendDispatcherProps) {
         username,
       }),
     );
+
+    toast(
+      <Box className='flex items-center gap-4 text-black'>
+        <Box>
+          <LocalFireDepartmentIcon />
+        </Box>
+        <Box>Your request is sent!</Box>
+      </Box>,
+    );
   };
+
+  useEffect(() => {
+    if (!onInvite) return;
+    setTimeout(() => setOnInvite(false), 5000);
+  }, [onInvite]);
 
   switch (mode) {
     case FriendsMode.Add:
