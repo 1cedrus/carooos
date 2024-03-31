@@ -45,7 +45,7 @@ export default function GameProvider({ roomCode, children }: GameProviderProps) 
   const [currentMoves, setCurrentMoves] = useState<number[]>([]);
   const [firstUserMsg, setFirstUserMsg] = useState<string>();
   const [secondUserMsg, setSecondUserMsg] = useState<string>();
-  const [firstUser, secondUser] = roomCode.split('-');
+  const [firstUser, secondUser] = [username!, roomCode.split('-').find((user) => user !== username)!];
 
   useEffect(() => {
     if (!stompClient || !stompClient.connected || (username !== firstUser && username !== secondUser)) return;

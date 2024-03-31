@@ -26,8 +26,8 @@ export default function UserCard() {
   const largeScreen = useMediaQuery('(min-width:640px)');
 
   return (
-    <Box className='flex gap-2'>
-      <Box className='flex flex-col items-center gap-2 p-2 border-2 border-black rounded-2xl h-fit'>
+    <Box className='flex gap-2 flex-col lg:flex-row w-full lg:w-fit'>
+      <Box className='flex lg:flex-col justify-around items-center gap-2 p-2 border-2 border-black rounded-2xl h-fit'>
         {TAB_LIST.map(({ tab, icon }) => (
           <IconButton
             onClick={() => setCurrentTab(tab)}
@@ -44,7 +44,7 @@ export default function UserCard() {
         </IconButton>
       </Box>
       <Grow in={true}>
-        <Box className='flex flex-col gap-8 h-1/2 lg:h-[30rem] w-full lg:w-[25rem] p-4 border-black border-2 rounded'>
+        <Box className='flex flex-col gap-8 min-h-[20rem] lg:h-[30rem] w-full lg:w-[25rem] p-4 border-black border-2 rounded'>
           {currentTab === Tab.Friends && <FriendsBox />}
           {currentTab === Tab.Messages && <MessagesBox />}
           {currentTab === Tab.User && <UserBox />}
