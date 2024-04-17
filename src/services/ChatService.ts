@@ -10,8 +10,8 @@ class ChatService extends BaseService {
     return this.isAccepted(response);
   }
 
-  async listSpecificMessages(target: string, authToken: string) {
-    const response = await http.get(`${MESSAGES_URL}/${target}`, authToken);
+  async listConversationMessages(ucid: number, authToken: string) {
+    const response = await http.get(`${MESSAGES_URL}/${ucid}`, authToken);
 
     return this.handleResponse(response);
   }

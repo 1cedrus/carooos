@@ -11,4 +11,6 @@ export enum EventName {
   OpenDrawAnnouncementModal = 'OpenDrawAnnouncementModal',
 
   ReloadInfo = 'ReloadInfo',
+
+  OnTopicMessages = 'OnTopicMessages',
 }

@@ -1,4 +1,4 @@
-import { ChatMessage, Props } from '@/types.ts';
+import { ChatMessage, ConversationInfo, Pagination, Props } from '@/types.ts';
 import { useUserInformationContext } from '@/providers/UserInformationProvider.tsx';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import ChatService from '@/services/ChatService.ts';
@@ -8,47 +8,40 @@ import { Box, Divider, IconButton, InputAdornment, OutlinedInput } from '@mui/ma
 import Message from '@/pages/Dashboard/UserCard/MessagesBox/Message.tsx';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
-import { useStompClientContext } from '@/providers/StompClientProvider.tsx';
-import { topics } from '@/utils/topics.ts';
+import { eventEmitter, EventName } from '@/utils/eventemitter.ts';
 
 interface ChatBoxProps extends Props {
-  target: string;
+  target: ConversationInfo;
   resetTarget: () => void;
 }
 
 export default function ChatBox({ target, resetTarget }: ChatBoxProps) {
   const { authToken } = useAuthenticationContext();
   const { username } = useUserInformationContext();
-  const { stompClient } = useStompClientContext();
   const [currentMsgs, setCurrentMsgs] = useState<ChatMessage[]>([]);
   const [msg, setMsg] = useState<string>();
   const ref = useRef<HTMLElement | null>(null);
 
   useEffect(() => {
-    if (!stompClient || !stompClient.connected) return;
-
-    const sub = stompClient?.subscribe(topics.MESSAGES, (message) => {
-      const chatMessage = JSON.parse(message.body) as ChatMessage;
-
-      if (chatMessage.sender === target) {
-        setCurrentMsgs((pre) => [...pre, chatMessage]);
-      } else if (chatMessage.sender === username && chatMessage.receiver === target) {
-        setCurrentMsgs((pre) => [...pre, chatMessage]);
+    const onMessage = (message: ChatMessage) => {
+      if (message.conversation === target.cid) {
+        setCurrentMsgs((pre) => [...pre, message]);
       }
-    });
+    };
+    eventEmitter.on(EventName.OnTopicMessages, onMessage);
 
     return () => {
-      sub?.unsubscribe();
+      eventEmitter.off(EventName.OnTopicMessages, onMessage);
     };
   }, []);
 
   useAsync(async () => {
     try {
-      const chatMessages: ChatMessage[] = await ChatService.listSpecificMessages(target, authToken);
+      const { items }: Pagination<ChatMessage> = await ChatService.listConversationMessages(target.cid, authToken);
 
-      chatMessages.sort((a, b) => Date.parse(a.timeStamp!) - Date.parse(b.timeStamp!));
+      items.sort((a, b) => Date.parse(a.timeStamp!) - Date.parse(b.timeStamp!));
 
-      setCurrentMsgs(chatMessages);
+      setCurrentMsgs(items);
     } catch (_) {}
   }, [target]);
 
@@ -57,7 +50,7 @@ export default function ChatBox({ target, resetTarget }: ChatBoxProps) {
 
     const chatMessage: ChatMessage = {
       sender: username,
-      receiver: target,
+      conversation: target.cid,
       content: msg,
     };
 
@@ -74,7 +67,7 @@ export default function ChatBox({ target, resetTarget }: ChatBoxProps) {
     <Box className='h-full flex flex-col border-2 rounded px-2 '>
       <Box className='flex-initial flex justify-between items-center'>
         <Box component='h2' className='text-xl'>
-          {target}
+          {target.peers[0]}
         </Box>
         <IconButton onClick={resetTarget} sx={{ color: 'black' }}>
           <ArrowBackOutlinedIcon fontSize='small' />

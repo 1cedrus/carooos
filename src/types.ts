@@ -81,7 +81,22 @@ export interface FriendsMessage {
 
 export interface ChatMessage {
   sender?: string;
-  receiver?: string;
+  conversation?: number;
   content?: string;
   timeStamp?: string;
+}
+
+export interface ConversationInfo {
+  cid: number;
+  peers: string[];
+  seen: boolean;
+  lastMessage?: ChatMessage;
+}
+
+export interface Pagination<Item> {
+  items: Item[];
+  from: number;
+  perPage: number;
+  hasNextPage: boolean;
+  total: number;
 }

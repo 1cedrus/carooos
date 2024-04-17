@@ -11,8 +11,8 @@ import { ToastContainer } from 'react-toastify';
 export default function App() {
   return (
     <AuthenticationProvider>
-      <StompClientProvider>
-        <UserInformationProvider>
+      <UserInformationProvider>
+        <StompClientProvider>
           <ThemeProvider theme={theme}>
             <CssBaseline />
             <GlobalStyles styles={globalStyles} />
@@ -25,8 +25,8 @@ export default function App() {
               closeOnClick
             />
           </ThemeProvider>
-        </UserInformationProvider>
-      </StompClientProvider>
+        </StompClientProvider>
+      </UserInformationProvider>
     </AuthenticationProvider>
   );
 }

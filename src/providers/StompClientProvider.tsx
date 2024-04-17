@@ -4,6 +4,7 @@ import { CompatClient, Stomp } from '@stomp/stompjs';
 import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
 import { api } from '@/utils/api.ts';
 import { topics } from '@/utils/topics.ts';
+import { EventName, triggerEvent } from '@/utils/eventemitter.ts';
 
 export interface StompClientContext {
   stompClient?: CompatClient;
@@ -29,7 +30,8 @@ export default function StompClientProvider({ children }: Props) {
       },
       () => {
         stompClient.subscribe(topics.MESSAGES, (message) => {
-          console.log(message.body);
+          triggerEvent(EventName.OnTopicMessages, JSON.parse(message.body));
+          triggerEvent(EventName.ReloadInfo);
         });
 
         console.log('WebSocket established!');
