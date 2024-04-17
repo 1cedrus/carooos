@@ -1,6 +1,6 @@
-import { Box, Grow, IconButton } from '@mui/material';
-import GamepadOutlinedIcon from '@mui/icons-material/GamepadOutlined';
+import { Box, Grow } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
+import Button from '@/components/custom/Button.tsx';
 
 export default function SandboxCard() {
   const navigate = useNavigate();
@@ -11,13 +11,24 @@ export default function SandboxCard() {
 
   return (
     <Grow in={true}>
-      <Box className='lg:h-1/2 p-4 flex flex-col w-full lg:w-[25rem] border-black border-2 rounded justify-center items-center gap-4'>
-        <Box component='h2' className='text-2xl hidden lg:block'>
-          Sandbox mode!
+      <Box className='lg:h-1/2 p-4 flex flex-col w-full lg:w-[25rem] border-black border-2 rounded-xl shadow-[0px_-5px_0px_0px_rgba(17,18,38,0.20)_inset] justify-center items-center'>
+        <Box component='h2' className='hidden lg:block'>
+          <pre>
+            {' '}
+            {`
+if you wanna test new strategy
+or view last match, go here!
+              |
+              v
+          `}
+          </pre>
         </Box>
-        <IconButton onClick={goSandbox} sx={{ color: 'black', border: '2px solid black' }} size='large'>
-          <GamepadOutlinedIcon fontSize='large' />
-        </IconButton>
+        <Button
+          onClick={goSandbox}
+          textClassName='text-xl font-semibold'
+          className='rounded-xl shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]'>
+          Sandbox
+        </Button>
       </Box>
     </Grow>
   );

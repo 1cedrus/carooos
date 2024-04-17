@@ -1,5 +1,4 @@
-import { Box, Grow, IconButton } from '@mui/material';
-import PlayArrowOutlinedIcon from '@mui/icons-material/PlayArrowOutlined';
+import { Box, Grow } from '@mui/material';
 import { useStompClientContext } from '@/providers/StompClientProvider.tsx';
 import { useState } from 'react';
 import { FindingMessage, MatchingMessage, OkMessage, QueueMessage, QueueMessageType } from '@/types.ts';
@@ -8,6 +7,7 @@ import { useUserInformationContext } from '@/providers/UserInformationProvider.t
 import useAsync from '@/hooks/useAsync.ts';
 import GameService from '@/services/GameService.ts';
 import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
+import Button from '@/components/custom/Button.tsx';
 
 export default function GameCard() {
   const navigate = useNavigate();
@@ -17,6 +17,7 @@ export default function GameCard() {
   const [currentGame, setCurrentGame] = useState<string>();
   const [onQueue, setOnQueue] = useState(false);
   const [onWaitingConfirmation, setOnWaitingConfirmation] = useState(false);
+  const [subId, setSubId] = useState<string>();
 
   useAsync(async () => {
     const { game } = await GameService.currentGame(authToken);
@@ -96,7 +97,16 @@ export default function GameCard() {
       }),
     );
 
+    setSubId(stompSub?.id);
     setOnQueue(true);
+  };
+
+  const quitQueue = () => {
+    if (!stompClient || !subId) return;
+
+    stompClient?.unsubscribe(subId);
+    setSubId('');
+    setOnQueue(false);
   };
 
   const doContinue = () => {
@@ -105,35 +115,53 @@ export default function GameCard() {
 
   return (
     <Grow in={true}>
-      <Box className='lg:h-1/2 flex lg:flex-col w-full lg:w-[25rem] justify-center gap-4 lg:gap-5'>
-        <Box className='flex flex-col lg:w-[25rem] flex-auto border-black border-2 rounded justify-center items-center gap-4'>
-          {currentGame ? (
-            <Box className='flex flex-col justify-center items-center gap-4'>
-              <Box component='h2' className='text-2xl hidden lg:block'>
+      <Box className='lg:h-1/2 flex lg:flex-col w-full lg:w-[25rem] justify-center lg:gap-5'>
+        <Box className='flex flex-col lg:w-[25rem] flex-auto border-black border-2 gap-4 justify-between items-center p-4 rounded-xl shadow-[0px_-5px_0px_0px_rgba(17,18,38,0.20)_inset]'>
+          <Box className='flex-auto  w-full p-2'>
+            <pre>{`{
+  "mode": "casual",
+  "description": "20x20, 5 win",
+  "online": null
+}`}</pre>
+          </Box>
+          <Box className='flex gap-2 justify-between w-full'>
+            {currentGame ? (
+              <Button
+                onClick={doContinue}
+                textClassName='text-xl font-semibold'
+                fullWidth
+                className='rounded-xl shadow-[0px_-5px_0px_0px_rgba(17,18,38,0.20)_inset]'>
                 Continue
-              </Box>
-              <IconButton onClick={doContinue} sx={{ color: 'black', border: '2px solid black' }} size='large'>
-                <PlayArrowOutlinedIcon fontSize='large' />
-              </IconButton>
-            </Box>
-          ) : stompClient?.connected ? (
-            <>
-              <Box component='h2' className='text-2xl hidden lg:block'>
-                Click to play!
-              </Box>
-              {onQueue ? (
-                <Box>Matching...</Box>
-              ) : (
-                <IconButton onClick={doQueue} sx={{ color: 'black', border: '2px solid black' }} size='large'>
-                  <PlayArrowOutlinedIcon fontSize='large' />
-                </IconButton>
-              )}
-            </>
-          ) : (
-            <Box component='h2' className='text-2xl'>
-              Connecting...
-            </Box>
-          )}
+              </Button>
+            ) : (
+              <>
+                {onQueue ? (
+                  <Button
+                    onClick={quitQueue}
+                    textClassName='text-xl font-semibold'
+                    fullWidth
+                    className='rounded-xl shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]'>
+                    Stop
+                  </Button>
+                ) : (
+                  <Button
+                    onClick={doQueue}
+                    textClassName='text-xl font-semibold'
+                    fullWidth
+                    className='rounded-xl shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]'>
+                    {stompClient?.connected ? 'Play' : '...'}
+                  </Button>
+                )}
+              </>
+            )}
+            <Button
+              onClick={quitQueue}
+              fullWidth
+              textClassName='text-xl font-semibold'
+              className='rounded-xl shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]'>
+              Leaderboard
+            </Button>
+          </Box>
         </Box>
       </Box>
     </Grow>

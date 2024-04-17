@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { Props } from '@/types.ts';
+import { ChatMessage, Props } from '@/types.ts';
 import { CompatClient, Stomp } from '@stomp/stompjs';
 import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
 import { api } from '@/utils/api.ts';
@@ -30,7 +30,8 @@ export default function StompClientProvider({ children }: Props) {
       },
       () => {
         stompClient.subscribe(topics.MESSAGES, (message) => {
-          triggerEvent(EventName.OnTopicMessages, JSON.parse(message.body));
+          const chatMessage = JSON.parse(message.body) as ChatMessage;
+          triggerEvent(EventName.OnTopicMessages, chatMessage);
           triggerEvent(EventName.ReloadInfo);
         });
 

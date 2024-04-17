@@ -19,7 +19,7 @@ export default function App() {
             <RouterProvider router={router} />
             <ToastContainer
               toastClassName='border-2 border-black'
-              position='top-center'
+              position='top-right'
               autoClose={3000}
               newestOnTop
               closeOnClick

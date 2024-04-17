@@ -1,4 +1,4 @@
-import { ChatMessage, ConversationInfo, Pagination, Props } from '@/types.ts';
+import { ChatMessage, ConversationInfo, Pagination } from '@/types.ts';
 import { useUserInformationContext } from '@/providers/UserInformationProvider.tsx';
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import ChatService from '@/services/ChatService.ts';
@@ -9,20 +9,26 @@ import Message from '@/pages/Dashboard/UserCard/MessagesBox/Message.tsx';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
 import { eventEmitter, EventName } from '@/utils/eventemitter.ts';
+import { useNavigate, useParams } from 'react-router-dom';
 
-interface ChatBoxProps extends Props {
-  target: ConversationInfo;
-  resetTarget: () => void;
-}
-
-export default function ChatBox({ target, resetTarget }: ChatBoxProps) {
+export default function ChatBox() {
+  const navigate = useNavigate();
+  const { cid } = useParams();
   const { authToken } = useAuthenticationContext();
-  const { username } = useUserInformationContext();
+  const { username, conversations } = useUserInformationContext();
   const [currentMsgs, setCurrentMsgs] = useState<ChatMessage[]>([]);
   const [msg, setMsg] = useState<string>();
   const ref = useRef<HTMLElement | null>(null);
+  const [target, setTarget] = useState<ConversationInfo>();
 
   useEffect(() => {
+    if (!conversations) return;
+    setTarget(conversations.find((o) => o.cid === Number(cid)));
+  }, [cid]);
+
+  useEffect(() => {
+    if (!target) return;
+
     const onMessage = (message: ChatMessage) => {
       if (message.conversation === target.cid) {
         setCurrentMsgs((pre) => [...pre, message]);
@@ -33,9 +39,11 @@ export default function ChatBox({ target, resetTarget }: ChatBoxProps) {
     return () => {
       eventEmitter.off(EventName.OnTopicMessages, onMessage);
     };
-  }, []);
+  }, [target]);
 
   useAsync(async () => {
+    if (!target) return;
+
     try {
       const { items }: Pagination<ChatMessage> = await ChatService.listConversationMessages(target.cid, authToken);
 
@@ -46,6 +54,8 @@ export default function ChatBox({ target, resetTarget }: ChatBoxProps) {
   }, [target]);
 
   const sendMessage = async (e: FormEvent) => {
+    if (!target) return;
+
     e.preventDefault();
 
     const chatMessage: ChatMessage = {
@@ -63,13 +73,15 @@ export default function ChatBox({ target, resetTarget }: ChatBoxProps) {
     ref.current?.scroll(0, ref.current?.scrollHeight);
   }, [currentMsgs]);
 
+  if (!target) return null;
+
   return (
     <Box className='h-full flex flex-col border-2 rounded px-2 '>
       <Box className='flex-initial flex justify-between items-center'>
         <Box component='h2' className='text-xl'>
           {target.peers[0]}
         </Box>
-        <IconButton onClick={resetTarget} sx={{ color: 'black' }}>
+        <IconButton onClick={() => navigate('/dashboard/messages')} sx={{ color: 'black' }}>
           <ArrowBackOutlinedIcon fontSize='small' />
         </IconButton>
       </Box>

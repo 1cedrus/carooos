@@ -1,14 +1,17 @@
-import { Button as MuiButton, ButtonProps as MuiButtonProps } from '@mui/material';
+import { Box, Button as MuiButton, ButtonProps as MuiButtonProps } from '@mui/material';
 
-interface ButtonProps extends MuiButtonProps {}
+interface ButtonProps extends MuiButtonProps {
+  textClassName?: string;
+}
 
-export default function Button({ children, ...props }: ButtonProps) {
+export default function Button({ children, className, textClassName, ...props }: ButtonProps) {
   return (
     <MuiButton
       variant='outlined'
       sx={{ borderColor: 'black', color: 'black', '&:hover': { borderColor: 'black' } }}
+      className={className}
       {...props}>
-      {children}
+      <Box className={textClassName}>{children}</Box>
     </MuiButton>
   );
 }
