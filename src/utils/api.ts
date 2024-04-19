@@ -1,6 +1,6 @@
 export const api: Record<string, string> = {
-  http: 'http://localhost:9000',
-  ws: 'ws://localhost:9000/ws',
+  http: 'https://api.1cedrus.id.vn:9000',
+  ws: 'wss://api.1cedrus.id.vn:9000/ws',
 };
 
 export const HTTP = api.http;
