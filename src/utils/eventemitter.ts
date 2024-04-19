@@ -9,6 +9,13 @@ export const triggerEvent = (name: EventName, ...args: any[]) => {
 export enum EventName {
   OpenWinnerAnnouncementModal = 'OpenWinnerAnnouncementModal',
   OpenDrawAnnouncementModal = 'OpenDrawAnnouncementModal',
+  OpenMatchFoundModal = 'OpenMatchFoundModal',
 
   ReloadInfo = 'ReloadInfo',
+  NavigateTo = 'NavigateTo',
+
+  OnTopicMessages = 'OnTopicMessages',
+  OnTopicFriends = 'OnTopicFriends',
+  OnTopicQueue = 'OnTopicQueue',
+  OnTopicGame = 'OnTopicGame',
 }

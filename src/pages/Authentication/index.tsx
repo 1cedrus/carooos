@@ -11,7 +11,7 @@ export default function Authentication() {
 
   useEffect(() => {
     if (isAuthenticated) {
-      navigate('/dashboard');
+      navigate('/play');
     }
   }, [isAuthenticated]);
 

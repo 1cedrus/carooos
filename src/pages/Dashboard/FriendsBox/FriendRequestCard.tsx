@@ -27,7 +27,7 @@ export default function FriendRequestCard({ username, elo }: FriendRequestCardPr
 
   return (
     <Grow in={true}>
-      <Box className='flex justify-between items-center pl-2 border-[1px] rounded'>
+      <Box className='flex justify-between items-center pl-2 border-[1px] border-black rounded shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]'>
         <Box className='flex justify-between w-[10rem]'>
           <Box component='h2'>{username}</Box>
           <Box component='h4'>

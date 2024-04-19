@@ -1,10 +1,8 @@
-import { Box } from '@mui/material';
 import { useParams } from 'react-router-dom';
-import GameProvider, { useGameContext } from '@/providers/GameProvider.tsx';
+import GameProvider from '@/providers/GameProvider.tsx';
 import { useUserInformationContext } from '@/providers/UserInformationProvider.tsx';
 import ErrorPage from '@/pages/ErrorPage.tsx';
 import InGameWindow from '@/pages/Game/InGameWindow';
-import MatchFound from '@/pages/Game/MatchFound.tsx';
 
 export default function Game() {
   const { roomCode } = useParams();
@@ -20,13 +18,9 @@ export default function Game() {
 }
 
 function GameContainer() {
-  const { nextMove } = useGameContext();
+  // const { nextMove, roomCode } = useGameContext();
 
-  if (!nextMove) return <MatchFound />;
+  // if (!nextMove) return <MatchFound />;
 
-  return (
-    <Box className='h-screen'>
-      <InGameWindow />
-    </Box>
-  );
+  return <InGameWindow />;
 }

@@ -19,13 +19,8 @@ export interface GameContext {
   currentMoves: number[];
   firstUser: string;
   secondUser: string;
-  inGameChat?: InGameChat;
+  inGameChat?: InGameChatMessage[];
   doMove: (move: number) => void;
-}
-
-export interface InGameChat {
-  firstUserMsg: string;
-  secondUserMsg: string;
 }
 
 export const GameContext = createContext<GameContext>({} as GameContext);
@@ -34,21 +29,23 @@ export const useGameContext = () => {
   return useContext(GameContext);
 };
 
-interface GameProviderProps extends Props {
-  roomCode: string;
-}
-
-export default function GameProvider({ roomCode, children }: GameProviderProps) {
-  const { username } = useUserInformationContext();
+export default function GameProvider({ children }: Props) {
+  const { currentGame: roomCode, username } = useUserInformationContext();
   const { stompClient } = useStompClientContext();
   const [nextMove, setNextMove] = useState<string>();
   const [currentMoves, setCurrentMoves] = useState<number[]>([]);
-  const [firstUserMsg, setFirstUserMsg] = useState<string>();
-  const [secondUserMsg, setSecondUserMsg] = useState<string>();
   const [firstUser, secondUser] = [username!, roomCode.split('-').find((user) => user !== username)!];
+  const [inGameChat, setInGameChat] = useState<InGameChatMessage[]>([]);
 
   useEffect(() => {
-    if (!stompClient || !stompClient.connected || (username !== firstUser && username !== secondUser)) return;
+    setCurrentMoves([]);
+    setNextMove('');
+    setInGameChat([]);
+  }, [roomCode]);
+
+  useEffect(() => {
+    if (!roomCode || !stompClient || !stompClient.connected || (username !== firstUser && username !== secondUser))
+      return;
 
     const handleJoinMessage = (msg: JoinMessage) => {
       setNextMove(msg.nextMove);
@@ -61,18 +58,12 @@ export default function GameProvider({ roomCode, children }: GameProviderProps) 
     };
 
     const handleFinishMessage = (msg: FinishMessage) => {
-      triggerEvent(EventName.OpenWinnerAnnouncementModal, msg.winner, '/dashboard');
+      triggerEvent(EventName.OpenWinnerAnnouncementModal, msg.winner);
       triggerEvent(EventName.ReloadInfo);
     };
 
     const handleInGameMessage = (msg: InGameChatMessage) => {
-      const { sender, content } = msg;
-
-      if (sender === firstUser) {
-        setFirstUserMsg(content);
-      } else if (sender === secondUser) {
-        setSecondUserMsg(content);
-      }
+      setInGameChat((pre) => [msg, ...pre]);
     };
 
     const sub = stompClient.subscribe(topics.GAME(roomCode), (message) => {
@@ -97,7 +88,7 @@ export default function GameProvider({ roomCode, children }: GameProviderProps) 
     return () => {
       sub.unsubscribe();
     };
-  }, [stompClient]);
+  }, [stompClient, roomCode]);
 
   const doMove = (move: number) => {
     if (nextMove !== username || currentMoves.includes(move)) {
@@ -106,27 +97,6 @@ export default function GameProvider({ roomCode, children }: GameProviderProps) 
 
     stompClient?.send(topics.PLAY_GAME(roomCode), {}, move.toString());
   };
-
-  useEffect(() => {
-    const clearMessage = setTimeout(() => setFirstUserMsg(''), 5000);
-
-    return () => {
-      clearTimeout(clearMessage);
-    };
-  }, [firstUserMsg]);
-
-  useEffect(() => {
-    const clearMessage = setTimeout(() => setSecondUserMsg(''), 5000);
-
-    return () => {
-      clearTimeout(clearMessage);
-    };
-  }, [secondUserMsg]);
-
-  const inGameChat = {
-    firstUserMsg,
-    secondUserMsg,
-  } as InGameChat;
 
   return (
     <GameContext.Provider value={{ roomCode, nextMove, currentMoves, firstUser, secondUser, doMove, inGameChat }}>

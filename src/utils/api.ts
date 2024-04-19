@@ -13,5 +13,5 @@ export const FRIEND_URL = `${HTTP}/api/friends`;
 export const USER_INFORMATION_URL = `${HTTP}/api/user`;
 export const PUBLIC_USER_INFORMATION_URL = `${HTTP}/api/public/user`;
 export const PUBLIC_USERS_INFORMATION_URL = `${HTTP}/api/public/users`;
-export const CURRENT_GAME_URL = `${HTTP}/api/game`;
+export const LIST_GAMES = `${HTTP}/api/game`;
 export const MESSAGES_URL = `${HTTP}/api/messages`;

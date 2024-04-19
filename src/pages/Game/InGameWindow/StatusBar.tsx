@@ -1,39 +1,31 @@
-import { Box } from '@mui/material';
+import { Box, Divider } from '@mui/material';
 import User from '@/components/shared/User.tsx';
 import ArrowBackIosNewIcon from '@mui/icons-material/ArrowBackIosNew';
-import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import ArrowForwardIosIcon from '@mui/icons-material/ArrowForwardIos';
 import { useGameContext } from '@/providers/GameProvider.tsx';
+import MessageButton from '@/pages/Game/InGameWindow/MessageButton.tsx';
 
 export default function StatusBar() {
   const { nextMove, firstUser, secondUser, inGameChat } = useGameContext();
 
   return (
-    <Box>
-      <Box className='flex justify-between items-center gap-4 md:gap-14'>
-        <Box className='relative'>
-          <User username={firstUser} />
-          {inGameChat?.firstUserMsg && (
-            <Box
-              component='p'
-              className='break-word max-w-[7rem] text-center absolute right-0 bg-white border-2 border-black p-2 px-4 z-10'>
-              {inGameChat.firstUserMsg}
+    <Box className='p-2 border-2 border-black rounded-2xl shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]'>
+      <Box className='flex items-center gap-12'>
+        <User username={firstUser} />
+        {firstUser === nextMove ? <ArrowBackIosNewIcon /> : <ArrowForwardIosIcon />}
+        <User username={secondUser} />
+      </Box>
+      <Divider />
+      <Box>
+        <Box className='my-2 h-[15rem] rounded border-[1px] border-black overflow-auto'>
+          {inGameChat?.map((message, index) => (
+            <Box key={index} className='p-2'>
+              <Box className='font-bold'>{message.sender}</Box>
+              <Box className='break-words'>{message.content}</Box>
             </Box>
-          )}
+          ))}
         </Box>
-        {<ArrowBackIosNewIcon className={`${firstUser !== nextMove ? 'invisible' : ''}`} />}
-        <LocalFireDepartmentIcon />
-        {<ArrowForwardIosIcon className={secondUser !== nextMove ? 'invisible' : ''} />}
-        <Box className='relative'>
-          <User username={secondUser} />
-          {inGameChat?.secondUserMsg && (
-            <Box
-              component='p'
-              className='break-word max-w-[7rem] text-center absolute left-[-5rem] bg-white border-2 border-black p-2 px-4 z-10'>
-              {inGameChat.secondUserMsg}
-            </Box>
-          )}
-        </Box>
+        <MessageButton />
       </Box>
     </Box>
   );

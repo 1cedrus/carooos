@@ -1,5 +1,5 @@
-import { createContext, useContext, useEffect, useState } from 'react';
-import { Props } from '@/types.ts';
+import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
+import { ConversationInfo, Props } from '@/types.ts';
 import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
 import UserService from '@/services/UserService.ts';
 import useAsync from '@/hooks/useAsync.ts';
@@ -10,6 +10,10 @@ export interface UserInformationContext {
   elo?: number;
   friends?: string[];
   requests?: string[];
+  conversations?: ConversationInfo[];
+  setConversations: Dispatch<SetStateAction<ConversationInfo[]>>;
+  currentGame: string;
+  setCurrentGame: Dispatch<SetStateAction<string>>;
 }
 
 export const UserInformationContext = createContext<UserInformationContext>({} as UserInformationContext);
@@ -24,16 +28,25 @@ export default function UserInformationProvider({ children }: Props) {
   const [elo, setElo] = useState<number>();
   const [friends, setFriends] = useState<string[]>([]);
   const [requests, setRequests] = useState<string[]>([]);
+  const [conversations, setConversations] = useState<ConversationInfo[]>([]);
+  const [currentGame, setCurrentGame] = useState<string>('');
 
   const doFetchInfo = async () => {
     if (!isAuthenticated) return;
 
-    const { username, elo, friends, requests } = await UserService.getUserInfo(authToken);
+    const { username, elo, friends, requests, conversations, currentGame } = await UserService.getUserInfo(authToken);
 
     setUsername(username);
     setElo(elo);
     setFriends(friends);
     setRequests(requests);
+    setCurrentGame(currentGame);
+    setConversations(
+      conversations.map((conversation: ConversationInfo) => ({
+        ...conversation,
+        peers: conversation.peers.filter((peer) => peer !== username),
+      })),
+    );
   };
 
   useAsync(async () => {
@@ -57,7 +70,8 @@ export default function UserInformationProvider({ children }: Props) {
   }, []);
 
   return (
-    <UserInformationContext.Provider value={{ username, elo, friends, requests }}>
+    <UserInformationContext.Provider
+      value={{ username, elo, friends, requests, conversations, setConversations, currentGame, setCurrentGame }}>
       {children}
     </UserInformationContext.Provider>
   );

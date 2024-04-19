@@ -1,6 +1,6 @@
 import { Props } from '@/types.ts';
 import usePublicInfo from '@/hooks/usePublicInfo.ts';
-import { Avatar, Box, useMediaQuery } from '@mui/material';
+import { Avatar, Box } from '@mui/material';
 
 interface UserProps extends Props {
   username?: string;
@@ -8,11 +8,10 @@ interface UserProps extends Props {
 
 export default function User({ className, username }: UserProps) {
   const { elo } = usePublicInfo(username!);
-  const largeScreen = useMediaQuery('(min-width:640px)');
 
   return (
     <Box className={`flex items-center gap-4 ${className}`}>
-      <Avatar sx={{ width: largeScreen ? 60 : 40, height: largeScreen ? 60 : 40, border: '2px solid black' }}></Avatar>
+      <Avatar sx={{ width: 40, height: 40, border: '1px solid black' }}></Avatar>
       <Box className='flex w-full flex-col'>
         <Box component='h2' className='md:text-2xl'>
           {username}

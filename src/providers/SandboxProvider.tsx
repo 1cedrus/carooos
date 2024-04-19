@@ -1,5 +1,5 @@
 import { createContext, useContext, useEffect, useState } from 'react';
-import { Props } from '@/types.ts';
+import { Game, Props } from '@/types.ts';
 import { isGameDraw, isGameFinish } from '@/utils/game.ts';
 import { EventName, triggerEvent } from '@/utils/eventemitter.ts';
 import { getLast } from '@/utils/number.ts';
@@ -17,6 +17,7 @@ interface SandboxContext {
   doForward: () => void;
   canForward?: boolean;
   canReturn?: boolean;
+  clearMoves?: () => void;
 }
 
 export const SandboxContext = createContext<SandboxContext>({} as SandboxContext);
@@ -26,13 +27,14 @@ export const useSandboxContext = () => {
 };
 
 interface SandboxProviderProps extends Props {
-  roomCode?: string;
+  game?: Game;
 }
 
-export default function SandboxProvider({ children, roomCode = DEFAULT_SANDBOX_ROOM_CODE }: SandboxProviderProps) {
+export default function SandboxProvider({ children, game }: SandboxProviderProps) {
+  const roomCode = game?.roomCode || DEFAULT_SANDBOX_ROOM_CODE;
   const [nextMove, setNextMove] = useState<string>();
   const [currentMoves, setCurrentMoves] = useState<number[]>([]);
-  const [pastMoves, setPastMoves] = useState<number[]>([]);
+  const [pastMoves, setPastMoves] = useState<number[]>(game?.moves || []);
   const [firstUser, secondUser] = roomCode.split('-');
 
   const doReturn = () => {
@@ -56,8 +58,13 @@ export default function SandboxProvider({ children, roomCode = DEFAULT_SANDBOX_R
     setPastMoves([]);
   };
 
+  const clearMoves = () => {
+    setCurrentMoves([]);
+    setPastMoves([]);
+  };
+
   useEffect(() => {
-    if (currentMoves.length === 0) return;
+    if (game || currentMoves.length === 0) return;
 
     if (isGameFinish(currentMoves)) {
       const winner = (currentMoves.length - 1) % 2 === 0 ? firstUser : secondUser;
@@ -90,6 +97,7 @@ export default function SandboxProvider({ children, roomCode = DEFAULT_SANDBOX_R
         doReturn,
         canForward,
         canReturn,
+        clearMoves,
       }}>
       {children}
     </SandboxContext.Provider>
