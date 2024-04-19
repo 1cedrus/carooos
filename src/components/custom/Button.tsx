@@ -8,7 +8,7 @@ export default function Button({ children, className, textClassName, ...props }:
   return (
     <MuiButton
       variant='outlined'
-      sx={{ borderColor: 'black', color: 'black', '&:hover': { borderColor: 'black' } }}
+      sx={{ bgcolor: 'white', borderColor: 'black', color: 'black', '&:hover': { bgcolor: 'white' } }}
       className={className}
       {...props}>
       <Box className={textClassName}>{children}</Box>

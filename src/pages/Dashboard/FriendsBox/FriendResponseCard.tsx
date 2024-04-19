@@ -30,7 +30,7 @@ export default function FriendResponseCard({ sender }: FriendResponseCardProps) 
 
   return (
     <Grow in={true}>
-      <Box className='flex justify-between items-center pl-2 border-2 border-black rounded shadow-md'>
+      <Box className='flex justify-between items-center pl-2 border-2 border-black rounded shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]'>
         <Box className='flex justify-between w-[10rem]'>
           <Box component='h2'>{username}</Box>
           <Box component='h4'>

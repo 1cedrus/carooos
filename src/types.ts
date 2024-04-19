@@ -100,3 +100,14 @@ export interface Pagination<Item> {
   hasNextPage: boolean;
   total: number;
 }
+
+export interface Game {
+  draw: boolean;
+  finish: boolean;
+  firstMoveUser: string;
+  id: number;
+  moves: number[];
+  roomCode: string;
+  winner: string;
+  playedAt: string;
+}

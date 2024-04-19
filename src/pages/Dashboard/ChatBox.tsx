@@ -4,12 +4,13 @@ import { FormEvent, useEffect, useRef, useState } from 'react';
 import ChatService from '@/services/ChatService.ts';
 import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
 import useAsync from '@/hooks/useAsync.ts';
-import { Box, Divider, IconButton, InputAdornment, OutlinedInput } from '@mui/material';
-import Message from '@/pages/Dashboard/UserCard/MessagesBox/Message.tsx';
+import { Box, IconButton } from '@mui/material';
+import Message from '@/pages/Dashboard/MessagesBox/Message.tsx';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
 import { eventEmitter, EventName } from '@/utils/eventemitter.ts';
 import { useNavigate, useParams } from 'react-router-dom';
+import TextField from '@/components/custom/TextField.tsx';
 
 export default function ChatBox() {
   const navigate = useNavigate();
@@ -22,16 +23,19 @@ export default function ChatBox() {
   const [target, setTarget] = useState<ConversationInfo>();
 
   useEffect(() => {
-    if (!conversations) return;
+    if (target || !conversations) return;
     setTarget(conversations.find((o) => o.cid === Number(cid)));
-  }, [cid]);
+  }, [cid, conversations]);
 
   useEffect(() => {
     if (!target) return;
 
-    const onMessage = (message: ChatMessage) => {
+    const onMessage = async (message: ChatMessage) => {
       if (message.conversation === target.cid) {
         setCurrentMsgs((pre) => [...pre, message]);
+
+        // Update seen on the server
+        await ChatService.listConversationMessages(target.cid, authToken, 0, 1);
       }
     };
     eventEmitter.on(EventName.OnTopicMessages, onMessage);
@@ -49,7 +53,7 @@ export default function ChatBox() {
 
       items.sort((a, b) => Date.parse(a.timeStamp!) - Date.parse(b.timeStamp!));
 
-      setCurrentMsgs(items);
+      setCurrentMsgs((pre) => [...items, ...pre]);
     } catch (_) {}
   }, [target]);
 
@@ -73,20 +77,27 @@ export default function ChatBox() {
     ref.current?.scroll(0, ref.current?.scrollHeight);
   }, [currentMsgs]);
 
+  useEffect(() => {}, []);
+
   if (!target) return null;
 
   return (
-    <Box className='h-full flex flex-col border-2 rounded px-2 '>
-      <Box className='flex-initial flex justify-between items-center'>
-        <Box component='h2' className='text-xl'>
+    <Box className='h-[40rem] w-[45rem] p-4 border-2 border-black rounded-2xl shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset] flex flex-col'>
+      <Box className='flex justify-between items-center'>
+        <Box component='h2' className='text-xl font-bold'>
           {target.peers[0]}
         </Box>
-        <IconButton onClick={() => navigate('/dashboard/messages')} sx={{ color: 'black' }}>
-          <ArrowBackOutlinedIcon fontSize='small' />
+        <IconButton
+          onClick={() => navigate('/messages')}
+          className='shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]'
+          type='submit'
+          sx={{ color: 'black', borderRadius: '5px', border: '1px solid black', p: '0.25rem', px: '0.4rem' }}>
+          <ArrowBackOutlinedIcon />
         </IconButton>
       </Box>
-      <Divider />
-      <Box ref={ref} className='flex-auto flex flex-col gap-2 overflow-auto p-2'>
+      <Box
+        ref={ref}
+        className='h-[32rem] flex flex-col border-[1px] border-black rounded-xl gap-2 p-2 my-2 overflow-auto'>
         {currentMsgs.map(({ content, timeStamp, sender }) => (
           <Message
             key={content! + timeStamp!}
@@ -95,22 +106,14 @@ export default function ChatBox() {
           />
         ))}
       </Box>
-      <Box component='form' onSubmit={sendMessage} className='flex-initial flex gap-2 my-2'>
-        <OutlinedInput
-          value={msg}
-          onChange={(e) => setMsg(e.target.value)}
-          fullWidth
-          placeholder='messagezz go here'
-          size='small'
-          sx={{ pr: '0.2rem' }}
-          endAdornment={
-            <InputAdornment position='end'>
-              <IconButton type='submit' sx={{ color: 'black' }}>
-                <ArrowForwardOutlinedIcon fontSize='small' />
-              </IconButton>
-            </InputAdornment>
-          }
-        />
+      <Box component='form' onSubmit={sendMessage} className='flex gap-2'>
+        <TextField value={msg} onChange={(e) => setMsg(e.target.value)} placeholder='messagezz go here' />
+        <IconButton
+          className='shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]'
+          type='submit'
+          sx={{ color: 'black', borderRadius: '5px', border: '1px solid black', p: '0.25rem', px: '0.4rem' }}>
+          <ArrowForwardOutlinedIcon />
+        </IconButton>
       </Box>
     </Box>
   );

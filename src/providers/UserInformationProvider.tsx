@@ -10,9 +10,10 @@ export interface UserInformationContext {
   elo?: number;
   friends?: string[];
   requests?: string[];
-  games?: number[];
   conversations?: ConversationInfo[];
   setConversations: Dispatch<SetStateAction<ConversationInfo[]>>;
+  currentGame: string;
+  setCurrentGame: Dispatch<SetStateAction<string>>;
 }
 
 export const UserInformationContext = createContext<UserInformationContext>({} as UserInformationContext);
@@ -27,19 +28,19 @@ export default function UserInformationProvider({ children }: Props) {
   const [elo, setElo] = useState<number>();
   const [friends, setFriends] = useState<string[]>([]);
   const [requests, setRequests] = useState<string[]>([]);
-  const [games, setGames] = useState<number[]>([]);
   const [conversations, setConversations] = useState<ConversationInfo[]>([]);
+  const [currentGame, setCurrentGame] = useState<string>('');
 
   const doFetchInfo = async () => {
     if (!isAuthenticated) return;
 
-    const { username, elo, friends, requests, games, conversations } = await UserService.getUserInfo(authToken);
+    const { username, elo, friends, requests, conversations, currentGame } = await UserService.getUserInfo(authToken);
 
     setUsername(username);
     setElo(elo);
     setFriends(friends);
     setRequests(requests);
-    setGames(games);
+    setCurrentGame(currentGame);
     setConversations(
       conversations.map((conversation: ConversationInfo) => ({
         ...conversation,
@@ -70,7 +71,7 @@ export default function UserInformationProvider({ children }: Props) {
 
   return (
     <UserInformationContext.Provider
-      value={{ username, elo, friends, requests, games, conversations, setConversations }}>
+      value={{ username, elo, friends, requests, conversations, setConversations, currentGame, setCurrentGame }}>
       {children}
     </UserInformationContext.Provider>
   );
