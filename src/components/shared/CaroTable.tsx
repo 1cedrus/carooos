@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { Box, useMediaQuery } from '@mui/material';
 import Cross from '@/assets/cross.png';
 import Nought from '@/assets/nought.png';
@@ -17,7 +17,7 @@ interface CaroTableProps extends Props {
 }
 
 export default function CaroTable({ doMove, currentMoves }: CaroTableProps) {
-  const [waitMove, setWaitMove] = useState<number>();
+  // const [waitMove, setWaitMove] = useState<number>();
   const largeScreen = useMediaQuery('(min-width:640px)');
 
   // Draw caro table
@@ -96,11 +96,11 @@ export default function CaroTable({ doMove, currentMoves }: CaroTableProps) {
 
     context.fillRect(x * 50, y * 50, 50, 50);
 
-    if (!waitMove) return;
-    x = Math.floor(waitMove % 20);
-    y = Math.floor(waitMove / 20);
-
-    context.fillRect(x * 50, y * 50, 50, 50);
+    // if (!waitMove) return;
+    // x = Math.floor(waitMove % 20);
+    // y = Math.floor(waitMove / 20);
+    //
+    // context.fillRect(x * 50, y * 50, 50, 50);
   };
 
   const handleMouseClick = (event: any) => {
@@ -117,12 +117,12 @@ export default function CaroTable({ doMove, currentMoves }: CaroTableProps) {
     }
 
     const move = 20 * y + x;
-    if (move === waitMove) {
-      doMove(20 * y + x);
-      setWaitMove(undefined);
-    } else {
-      setWaitMove(move);
-    }
+    // if (move === waitMove) {
+    doMove(move);
+    //   setWaitMove(undefined);
+    // } else {
+    //   setWaitMove(move);
+    // }
   };
 
   return (
