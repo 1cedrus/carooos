@@ -4,6 +4,7 @@ import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx
 import UserService from '@/services/UserService.ts';
 import useAsync from '@/hooks/useAsync.ts';
 import { eventEmitter, EventName } from '@/utils/eventemitter.ts';
+import { toast } from 'react-toastify';
 
 export interface UserInformationContext {
   username?: string;
@@ -23,7 +24,7 @@ export const useUserInformationContext = () => {
 };
 
 export default function UserInformationProvider({ children }: Props) {
-  const { isAuthenticated, authToken } = useAuthenticationContext();
+  const { isAuthenticated, authToken, doLogout } = useAuthenticationContext();
   const [username, setUsername] = useState<string>();
   const [elo, setElo] = useState<number>();
   const [friends, setFriends] = useState<string[]>([]);
@@ -34,19 +35,25 @@ export default function UserInformationProvider({ children }: Props) {
   const doFetchInfo = async () => {
     if (!isAuthenticated) return;
 
-    const { username, elo, friends, requests, conversations, currentGame } = await UserService.getUserInfo(authToken);
+    try {
+      const { username, elo, friends, requests, conversations, currentGame } = await UserService.getUserInfo(authToken);
 
-    setUsername(username);
-    setElo(elo);
-    setFriends(friends);
-    setRequests(requests);
-    setCurrentGame(currentGame);
-    setConversations(
-      conversations.map((conversation: ConversationInfo) => ({
-        ...conversation,
-        peers: conversation.peers.filter((peer) => peer !== username),
-      })),
-    );
+      setUsername(username);
+      setElo(elo);
+      setFriends(friends);
+      setRequests(requests);
+      setCurrentGame(currentGame);
+      setConversations(
+        conversations.map((conversation: ConversationInfo) => ({
+          ...conversation,
+          peers: conversation.peers.filter((peer) => peer !== username),
+        })),
+      );
+    } catch (e) {
+      toast.error('Some errors occurred while fetching user information');
+
+      doLogout();
+    }
   };
 
   useAsync(async () => {
