@@ -3,6 +3,7 @@ import { Game, Props } from '@/types.ts';
 import { isGameDraw, isGameFinish } from '@/utils/game.ts';
 import { EventName, triggerEvent } from '@/utils/eventemitter.ts';
 import { getLast } from '@/utils/number.ts';
+import { toReversed } from '@/utils/arrray.ts';
 
 const DEFAULT_SANDBOX_ROOM_CODE = 'X-O';
 
@@ -34,7 +35,7 @@ export default function SandboxProvider({ children, game }: SandboxProviderProps
   const roomCode = game?.roomCode || DEFAULT_SANDBOX_ROOM_CODE;
   const [nextMove, setNextMove] = useState<string>();
   const [currentMoves, setCurrentMoves] = useState<number[]>([]);
-  const [pastMoves, setPastMoves] = useState<number[]>(game?.moves || []);
+  const [pastMoves, setPastMoves] = useState<number[]>(toReversed(game?.moves || []));
   const [firstUser, secondUser] = roomCode.split('-');
 
   const doReturn = () => {
