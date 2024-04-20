@@ -52,7 +52,11 @@ export default function StompClientProvider({ children }: Props) {
       {
         Authorization: `Bearer ${authToken}`,
       },
-      () => console.log('WebSocket established!'),
+      () => {
+        stompClient.reconnectDelay = 1000;
+
+        console.log('WebSocket established!');
+      },
     );
 
     // Intend to make component re-render in-time
