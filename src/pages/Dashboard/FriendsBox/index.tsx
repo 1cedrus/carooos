@@ -33,6 +33,7 @@ export default function FriendsBox() {
         <Box className='flex gap-2'>
           <TextField value={query} onChange={(e) => setQuery(e.target.value)} placeholder='Search username....' />
           <Box
+            title='add friends'
             component='button'
             onClick={() => switchMode(mode === FriendsMode.Add ? FriendsMode.View : FriendsMode.Add)}
             className={`border-[1px] rounded px-2 border-black shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]  ${mode === FriendsMode.Add ? 'border-black' : ''}`}>

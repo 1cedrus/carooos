@@ -18,6 +18,7 @@ export default function SandBox({ onBack }: SandboxProps) {
     <Box className='flex flex-row-reverse gap-2 '>
       <Box className='flex flex-col gap-2 border-2 border-black h-fit p-2 rounded-2xl shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]'>
         <IconButton
+          title='back'
           className='shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]'
           onClick={doReturn}
           sx={{ color: 'black', border: '1px solid black' }}
@@ -25,6 +26,7 @@ export default function SandBox({ onBack }: SandboxProps) {
           <ArrowUpwardIcon />
         </IconButton>
         <IconButton
+          title='forward'
           className='shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]'
           onClick={doForward}
           sx={{ color: 'black', border: '1px solid black' }}
@@ -32,6 +34,7 @@ export default function SandBox({ onBack }: SandboxProps) {
           <ArrowDownwardIcon />
         </IconButton>
         <IconButton
+          title='reset'
           className='shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]'
           onClick={clearMoves}
           sx={{ color: 'black', border: '1px solid black' }}

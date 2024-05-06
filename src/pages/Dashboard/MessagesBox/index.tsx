@@ -22,6 +22,7 @@ export default function MessagesBox() {
         <TextField value={friendQuery} onChange={(e) => setFriendQuery(e.target.value)} placeholder='username' />
         <Box className='flex flex-col gap-2'>
           {conversations
+            ?.filter((o) => o.peers.includes(friendQuery))
             ?.sort((a, b) =>
               a.lastMessage && b.lastMessage
                 ? Date.parse(b.lastMessage.timeStamp!) - Date.parse(a.lastMessage.timeStamp!)

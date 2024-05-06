@@ -42,6 +42,7 @@ export default function NavigationBar() {
       {TAB_LIST.map(({ tab, icon }) => (
         <IconButton
           key={tab}
+          title={tab}
           onClick={() => navigate(tab)}
           className='shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]'
           sx={{ color: 'black', border: `1px ${currentTab?.includes(tab) ? 'solid' : 'dashed'} black` }}>
@@ -59,6 +60,7 @@ export default function NavigationBar() {
         </IconButton>
       ))}
       <IconButton
+        title='sign out'
         className='shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]'
         onClick={doLogout}
         sx={{ border: `1px dashed black` }}>
