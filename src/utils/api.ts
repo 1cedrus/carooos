@@ -1,6 +1,8 @@
+import { env } from '@/utils/env.ts';
+
 export const api: Record<string, string> = {
-  http: 'https://api.1cedrus.id.vn:9000',
-  ws: 'wss://api.1cedrus.id.vn:9000/ws',
+  http: env.HTTP_URL,
+  ws: env.WS_URL,
 };
 
 export const HTTP = api.http;
