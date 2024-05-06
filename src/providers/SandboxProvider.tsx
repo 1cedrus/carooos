@@ -37,6 +37,7 @@ export default function SandboxProvider({ children, game }: SandboxProviderProps
   const [currentMoves, setCurrentMoves] = useState<number[]>([]);
   const [pastMoves, setPastMoves] = useState<number[]>(toReversed(game?.moves || []));
   const [firstUser, secondUser] = roomCode.split('-');
+  const [isEnd, setIsEnd] = useState(false);
 
   const doReturn = () => {
     if (!currentMoves.length) return;
@@ -62,18 +63,19 @@ export default function SandboxProvider({ children, game }: SandboxProviderProps
   const clearMoves = () => {
     setCurrentMoves([]);
     setPastMoves([]);
+    setIsEnd(false);
   };
 
   useEffect(() => {
-    if (game || currentMoves.length === 0) return;
+    if (game || currentMoves.length === 0 || isEnd) return;
 
     if (isGameFinish(currentMoves)) {
       const winner = (currentMoves.length - 1) % 2 === 0 ? firstUser : secondUser;
       triggerEvent(EventName.OpenWinnerAnnouncementModal, winner);
-      setCurrentMoves([]);
+      setIsEnd(true);
     } else if (isGameDraw(currentMoves)) {
       triggerEvent(EventName.OpenDrawAnnouncementModal);
-      setCurrentMoves([]);
+      setIsEnd(true);
     }
   }, [currentMoves]);
 
