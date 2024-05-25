@@ -1,13 +1,13 @@
 import { createContext, useContext, useEffect, useState } from 'react';
 import { Props } from '@/types.ts';
-import AuthService, { Credential } from '@/services/AuthService.ts';
+import AuthService, { Credential, RegisterCredential } from '@/services/AuthService.ts';
 import { toast } from 'react-toastify';
 
 interface AuthenticationContext {
   authToken: string;
   isAuthenticated: boolean;
   doSignIn: (credential: Credential) => Promise<void>;
-  doSignUp: (registerCredential: Credential) => Promise<void>;
+  doSignUp: (registerCredential: RegisterCredential) => Promise<void>;
   doLogout: () => void;
 }
 
@@ -27,16 +27,16 @@ export default function AuthenticationProvider({ children }: Props) {
   const doSignIn = async (credential: Credential) => {
     try {
       setAuthToken((await AuthService.signIn(credential)).token);
-    } catch (_) {
-      toast.error('userz or password is wrong!');
+    } catch (e) {
+      toast.error((e as Error).message);
     }
   };
 
-  const doSignUp = async (registerCredential: Credential) => {
+  const doSignUp = async (registerCredential: RegisterCredential) => {
     try {
       setAuthToken((await AuthService.signUp(registerCredential)).token);
-    } catch (_) {
-      toast.error('userz is already existed!!');
+    } catch (e) {
+      toast.error((e as Error).message);
     }
   };
 

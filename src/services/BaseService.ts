@@ -1,7 +1,10 @@
+import { ErrorDetail } from '@/types.ts';
+
 export default class BaseService {
   async handleError(errorResponse: Response) {
-    const { message } = await errorResponse.json();
-    throw new Error(message);
+    const { detail } = (await errorResponse.json()) as ErrorDetail;
+
+    throw new Error(detail);
   }
 
   async handleResponse(response: Response) {
@@ -17,6 +20,10 @@ export default class BaseService {
   }
 
   isAccepted(response: Response) {
-    return response.status === 202;
+    if (response.status !== 202) {
+      return this.handleError(response);
+    }
+
+    return true;
   }
 }

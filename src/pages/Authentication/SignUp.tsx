@@ -7,6 +7,7 @@ import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx
 export default function SignUp() {
   const { doSignUp } = useAuthenticationContext();
   const { pathname } = useLocation();
+  const [email, setEmail] = useState<string>('');
   const [username, setUsername] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [passwordConfirmation, setPasswordConfirmation] = useState<string>('');
@@ -14,11 +15,12 @@ export default function SignUp() {
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
 
-    await doSignUp({ username, password });
+    await doSignUp({ email, username, password });
   };
 
   const isAvailable = pathname === '/register';
   const isError =
+    !/.+@.+\..+/.test(email) ||
     username.length <= 3 ||
     username.length > 16 ||
     password.length < 5 ||
@@ -29,8 +31,15 @@ export default function SignUp() {
   return (
     <Grow in={pathname === '/register'}>
       <Box sx={{ display: isAvailable ? 'flex' : 'none' }} className='flex h-screen justify-center items-center'>
-        <Box className='w-[25rem] border-2 border-black rounded p-4'>
+        <Box className='w-[25rem] border-2 border-black rounded p-4 shadow-custom'>
           <Box component='form' onSubmit={handleSubmit} className='flex flex-col gap-2 text-center '>
+            <TextField
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder='email'
+              helperText='set it carefully because if u forget password, u can recover your account'
+              error={!!email && !/.+@.+\..+/.test(email)}
+            />
             <TextField
               value={username}
               onChange={(e) => setUsername(e.target.value)}

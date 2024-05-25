@@ -111,3 +111,15 @@ export interface Game {
   winner: string;
   playedAt: string;
 }
+
+export interface ErrorDetail {
+  timestamp: string;
+  status: string;
+  detail: string;
+}
+
+export interface ResetPasswordInfo {
+  email?: string;
+  token?: string;
+  newPassword?: string;
+}

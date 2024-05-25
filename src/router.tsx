@@ -10,6 +10,7 @@ import PlayBox from '@/pages/Dashboard/PlayBox';
 import Game from '@/pages/Game';
 import ChatBox from '@/pages/Dashboard/ChatBox.tsx';
 import SandBox from '@/pages/Dashboard/SandBox.tsx';
+import ResetPassword from '@/pages/Authentication/ResetPassword';
 
 export default createBrowserRouter(
   createRoutesFromElements([
@@ -17,6 +18,7 @@ export default createBrowserRouter(
       <Route index element={<Home />}></Route>
       <Route path='login' element={<Authentication />}></Route>
       <Route path='register' element={<Authentication />}></Route>
+      <Route path='reset-password' element={<ResetPassword />}></Route>
       <Route path='/' element={<Dashboard />}>
         <Route path='user' element={<UserBox />}></Route>
         <Route path='messages' element={<MessagesBox />}></Route>

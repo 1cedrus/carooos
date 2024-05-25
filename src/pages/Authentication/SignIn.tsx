@@ -8,13 +8,13 @@ export default function SignIn() {
   const { pathname } = useLocation();
   const { doSignIn } = useAuthenticationContext();
   const navigate = useNavigate();
-  const [username, setUsername] = useState<string>('');
+  const [usernameOrEmail, setUsernameOrEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
   const handleSubmit = async (event: FormEvent) => {
     event.preventDefault();
 
-    await doSignIn({ username, password });
+    await doSignIn({ usernameOrEmail, password });
   };
 
   const isAvailable = pathname === '/login';
@@ -23,19 +23,36 @@ export default function SignIn() {
     <>
       <Grow in={isAvailable}>
         <Box sx={{ display: isAvailable ? 'flex' : 'none' }} className='flex h-screen justify-center items-center'>
-          <Box className='w-[25rem] border-2 border-black rounded p-4'>
+          <Box className='w-[25rem] border-2 border-black rounded p-4 shadow-custom'>
             <Box component='form' onSubmit={handleSubmit} className='flex flex-col gap-2 text-center '>
-              <TextField value={username} onChange={(e) => setUsername(e.target.value)} placeholder='user' />
+              <TextField
+                value={usernameOrEmail}
+                onChange={(e) => setUsernameOrEmail(e.target.value)}
+                placeholder='user or email'
+              />
               <TextField
                 type='password'
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 placeholder='passw'
               />
-              <Button type='submit'>Sign In</Button>
-              <Link onClick={() => navigate('/register')} sx={{ color: 'black' }} className='cursor-pointer'>
-                Sign up an account
-              </Link>
+              <Button type='submit' disabled={!usernameOrEmail || !password}>
+                Sign In
+              </Button>
+              <Box className='flex justify-between'>
+                <Link
+                  onClick={() => navigate('/reset-password')}
+                  sx={{ color: 'black', fontSize: '0.8rem' }}
+                  className='cursor-pointer '>
+                  Forgot your password?
+                </Link>
+                <Link
+                  onClick={() => navigate('/register')}
+                  sx={{ color: 'black', fontSize: '0.8rem' }}
+                  className='cursor-pointer'>
+                  Sign up an account
+                </Link>
+              </Box>
             </Box>
           </Box>
         </Box>
