@@ -1,6 +1,6 @@
 export interface httpCall {
   get: (url: string, authToken?: string) => Promise<Response>;
-  post: (url: string, jsonBody?: string, authToken?: string) => Promise<Response>;
+  post: (url: string, body?: BodyInit, authToken?: string, contentType?: boolean) => Promise<Response>;
   delete: (url: string, authToken?: string) => Promise<Response>;
 }
 
@@ -17,23 +17,26 @@ const http: httpCall = {
       headers,
     });
   },
-  post: (url: string, jsonBody?: string, authToken?: string) => {
-    let headers;
-    if (authToken) {
-      headers = {
-        'Content-Type': 'application/json',
-        Authorization: 'Bearer ' + authToken,
-      };
-    } else {
-      headers = {
-        'Content-Type': 'application/json',
-      };
+  post: (url: string, body?: BodyInit, authToken?: string, contentType = true) => {
+    let headers = {
+      'Content-Type': 'application/json',
+      Authorization: 'Bearer ' + authToken,
+    };
+
+    if (!contentType) {
+      // @ts-ignore
+      delete headers['Content-Type'];
+    }
+
+    if (!authToken) {
+      // @ts-ignore
+      delete headers.Authorization;
     }
 
     return fetch(url, {
       method: 'post',
       headers,
-      body: jsonBody,
+      body,
     });
   },
 

@@ -1,5 +1,10 @@
 import http from '@/utils/http.ts';
-import { PUBLIC_USER_INFORMATION_URL, PUBLIC_USERS_INFORMATION_URL, USER_INFORMATION_URL } from '@/utils/api.ts';
+import {
+  CHANGE_PROFILE_PIC,
+  PUBLIC_USER_INFORMATION_URL,
+  PUBLIC_USERS_INFORMATION_URL,
+  USER_INFORMATION_URL,
+} from '@/utils/api.ts';
 import BaseService from '@/services/BaseService.ts';
 
 class UserService extends BaseService {
@@ -21,6 +26,15 @@ class UserService extends BaseService {
 
   async getPublicInfos(queryUsername: string) {
     const response = await http.get(`${PUBLIC_USERS_INFORMATION_URL}?query=${queryUsername}`);
+
+    return this.handleResponse(response);
+  }
+
+  async setProfilePic(authToken: string, file: File) {
+    const formData = new FormData();
+    formData.append('image', file);
+
+    const response = await http.post(CHANGE_PROFILE_PIC, formData, authToken, false);
 
     return this.handleResponse(response);
   }

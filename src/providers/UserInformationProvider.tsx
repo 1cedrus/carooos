@@ -5,6 +5,7 @@ import UserService from '@/services/UserService.ts';
 import useAsync from '@/hooks/useAsync.ts';
 import { eventEmitter, EventName } from '@/utils/eventemitter.ts';
 import { toast } from 'react-toastify';
+import { IMAGE_URL } from '@/utils/api.ts';
 
 export interface UserInformationContext {
   username?: string;
@@ -12,6 +13,7 @@ export interface UserInformationContext {
   friends?: string[];
   requests?: string[];
   conversations?: ConversationInfo[];
+  profilePicUrl?: string;
   setConversations: Dispatch<SetStateAction<ConversationInfo[]>>;
   currentGame: string;
   setCurrentGame: Dispatch<SetStateAction<string>>;
@@ -31,18 +33,21 @@ export default function UserInformationProvider({ children }: Props) {
   const [requests, setRequests] = useState<string[]>([]);
   const [conversations, setConversations] = useState<ConversationInfo[]>([]);
   const [currentGame, setCurrentGame] = useState<string>('');
+  const [profilePicUrl, setProfilePicUrl] = useState<string>('');
 
   const doFetchInfo = async () => {
     if (!isAuthenticated) return;
 
     try {
-      const { username, elo, friends, requests, conversations, currentGame } = await UserService.getUserInfo(authToken);
+      const { username, elo, friends, requests, conversations, currentGame, profilePicUrl } =
+        await UserService.getUserInfo(authToken);
 
       setUsername(username);
       setElo(elo);
       setFriends(friends);
       setRequests(requests);
       setCurrentGame(currentGame);
+      setProfilePicUrl(`${IMAGE_URL}/${profilePicUrl}`);
       setConversations(
         conversations.map((conversation: ConversationInfo) => ({
           ...conversation,
@@ -78,7 +83,17 @@ export default function UserInformationProvider({ children }: Props) {
 
   return (
     <UserInformationContext.Provider
-      value={{ username, elo, friends, requests, conversations, setConversations, currentGame, setCurrentGame }}>
+      value={{
+        username,
+        elo,
+        friends,
+        requests,
+        conversations,
+        setConversations,
+        currentGame,
+        setCurrentGame,
+        profilePicUrl,
+      }}>
       {children}
     </UserInformationContext.Provider>
   );

@@ -10,6 +10,7 @@ export enum EventName {
   OpenWinnerAnnouncementModal = 'OpenWinnerAnnouncementModal',
   OpenDrawAnnouncementModal = 'OpenDrawAnnouncementModal',
   OpenMatchFoundModal = 'OpenMatchFoundModal',
+  OpenChangeProfilePicDialog = 'OpenChangeProfilePicDialog',
 
   ReloadInfo = 'ReloadInfo',
   NavigateTo = 'NavigateTo',
