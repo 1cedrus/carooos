@@ -16,7 +16,7 @@ export default function ResetPassword() {
   return (
     <Grow in={true}>
       <Box className='h-screen flex flex-col justify-center items-center'>
-        <Box className='flex flex-col gap-8 py-8 w-[40rem] border-2 border-black shadow-custom rounded'>
+        <Box className='flex flex-col gap-8 py-8 w-[40rem] border-2 border-black shadow-custom rounded bg-white'>
           <ResetPasswordStepper activeStep={activeStep} />
           {activeStep === ResetPasswordSteps.EnterEmail && (
             <EnterEmail email={email} setEmail={setEmail} setActiveStep={setActiveStep} />

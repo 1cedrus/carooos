@@ -30,8 +30,20 @@ export default function SignUp() {
 
   return (
     <Grow in={pathname === '/register'}>
-      <Box sx={{ display: isAvailable ? 'flex' : 'none' }} className='flex h-screen justify-center items-center'>
-        <Box className='w-[25rem] border-2 border-black rounded p-4 shadow-custom'>
+      <Box
+        sx={{ display: isAvailable ? 'flex' : 'none' }}
+        className='flex flex-col h-screen justify-center items-center gap-2'>
+        <Box
+          component='h1'
+          className='text-white font-bold'
+          sx={{
+            textShadow:
+              '5px 5px black, -5px -5px black, -5px -5px black, 5px 5px black, -5px 5px black, 5px -5px black',
+            fontSize: '2rem',
+          }}>
+          CAROOOS!
+        </Box>
+        <Box className='w-[25rem] border-2 border-black rounded p-4 shadow-custom bg-white'>
           <Box component='form' onSubmit={handleSubmit} className='flex flex-col gap-2 text-center '>
             <TextField
               value={email}

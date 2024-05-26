@@ -16,7 +16,7 @@ export default function Authentication() {
   }, [isAuthenticated]);
 
   return (
-    <Box className='px-4'>
+    <Box className=''>
       <SignUp />
       <SignIn />
     </Box>
