@@ -9,7 +9,7 @@ import { fromNow } from '@/utils/date.ts';
 import SandboxProvider from '@/providers/SandboxProvider.tsx';
 import SandBox from '@/pages/Dashboard/SandBox.tsx';
 import { eventEmitter, EventName } from '@/utils/eventemitter.ts';
-import ChangeProfilePicDialog from '@/pages/Dashboard/ChangeProfilePicDialog.tsx';
+import ChangeProfilePicModal from '@/pages/Dashboard/ChangeProfilePicModal.tsx';
 import { PencilEdit01Icon } from '@/components/shared/icons.tsx';
 
 export default function UserBox() {
@@ -41,7 +41,7 @@ export default function UserBox() {
             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
             badgeContent={
               <IconButton
-                onClick={() => eventEmitter.emit(EventName.OpenChangeProfilePicDialog)}
+                onClick={() => eventEmitter.emit(EventName.OpenChangeProfilePicModal)}
                 size='small'
                 sx={{ color: 'black', border: `1px solid black`, bgcolor: 'white', ':hover': { bgcolor: '#eee' } }}>
                 <PencilEdit01Icon />
@@ -108,7 +108,7 @@ export default function UserBox() {
           </Box>
         </Box>
       </Box>
-      <ChangeProfilePicDialog />
+      <ChangeProfilePicModal />
     </>
   );
 }
