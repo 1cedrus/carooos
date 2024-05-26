@@ -29,7 +29,10 @@ export default function ProfileSettingButton() {
 
   return (
     <>
-      <IconButton onClick={handleClick} sx={{ position: 'absolute', top: 8, right: 8 }}>
+      <IconButton
+        className='shadow-custom'
+        onClick={handleClick}
+        sx={{ position: 'absolute', top: 8, right: 8, border: '1px solid black' }}>
         <Settings02Icon />
       </IconButton>
       <Menu

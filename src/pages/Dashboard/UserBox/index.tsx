@@ -46,6 +46,7 @@ export default function UserBox() {
             badgeContent={
               <IconButton
                 onClick={() => eventEmitter.emit(EventName.OpenChangeProfilePicModal)}
+                className='shadow-custom'
                 size='small'
                 sx={{ color: 'black', border: `1px solid black`, bgcolor: 'white', ':hover': { bgcolor: '#eee' } }}>
                 <PencilEdit01Icon />

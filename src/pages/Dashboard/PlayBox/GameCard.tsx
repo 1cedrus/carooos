@@ -6,7 +6,7 @@ export default function GameCard() {
   const { doQueue, quitQueue, onQueue, stompClient } = useStompClientContext();
 
   return (
-    <Box className='flex-auto flex flex-col border-black border-[1px] gap-4 justify-between items-center p-4 rounded-xl shadow-[0px_-5px_0px_0px_rgba(17,18,38,0.20)_inset]'>
+    <Box className='flex-auto flex flex-col border-black border-[1px] gap-4 justify-between items-center p-4 rounded-xl'>
       <Box className='flex-auto  w-full p-2'>
         <pre>
           {`       ___                                                  

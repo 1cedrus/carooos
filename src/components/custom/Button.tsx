@@ -9,7 +9,7 @@ export default function Button({ children, className, textClassName, ...props }:
     <MuiButton
       variant='outlined'
       sx={{ bgcolor: 'white', borderColor: 'black', color: 'black', '&:hover': { bgcolor: 'white' } }}
-      className={'shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]'}
+      className={`shadow-custom ${className}`}
       {...props}>
       <Box className={textClassName}>{children}</Box>
     </MuiButton>

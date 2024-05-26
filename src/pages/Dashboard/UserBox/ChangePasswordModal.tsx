@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
 import { eventEmitter, EventName } from '@/utils/eventemitter.ts';
 import { toast } from 'react-toastify';
-import { Box, Dialog, DialogActions, DialogContent, TextField } from '@mui/material';
+import { Box, Dialog, DialogContent, TextField } from '@mui/material';
 import DialogTitle from '@/components/custom/DialogTitle.tsx';
 import Button from '@/components/custom/Button.tsx';
 import AuthService from '@/services/AuthService.ts';
@@ -51,7 +51,7 @@ export default function ChangePasswordModal() {
       }}
       maxWidth={'xs'}
       fullWidth>
-      <DialogTitle onClose={handleClose}>Change Profile Picture</DialogTitle>
+      <DialogTitle onClose={handleClose}>Change Password</DialogTitle>
       <DialogContent>
         <Box className='my-2 flex flex-col justify-center items-center gap-4'>
           <TextField
@@ -59,7 +59,7 @@ export default function ChangePasswordModal() {
             value={oldPassword}
             onChange={(e) => setOldPassword(e.target.value)}
             fullWidth
-            label='Your current password'
+            placeholder='Your current password'
           />
           <TextField
             type='password'
@@ -68,23 +68,25 @@ export default function ChangePasswordModal() {
             helperText='must 5 characters or above, lest than or equal 32'
             fullWidth
             error={!!password && (password.length < 5 || password.length > 32)}
-            label='New password'
+            placeholder='New password'
           />
           <TextField
             type='password'
             value={passwordConfirmation}
             onChange={(e) => setPasswordConfirmation(e.target.value)}
             fullWidth
-            label='Retype new password'
+            placeholder='Retype new password'
             error={!!passwordConfirmation && password !== passwordConfirmation}
           />
+          <Button
+            className='self-end'
+            onClick={handleSubmit}
+            disabled={!password || password !== passwordConfirmation}
+            fullWidth>
+            Submit
+          </Button>
         </Box>
       </DialogContent>
-      <DialogActions>
-        <Button onClick={handleSubmit} disabled={!password || password !== passwordConfirmation}>
-          Submit
-        </Button>
-      </DialogActions>
     </Dialog>
   );
 }

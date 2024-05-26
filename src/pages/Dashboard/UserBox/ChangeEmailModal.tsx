@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
 import { eventEmitter, EventName } from '@/utils/eventemitter.ts';
 import { toast } from 'react-toastify';
-import { Box, Dialog, DialogActions, DialogContent, TextField } from '@mui/material';
+import { Box, Dialog, DialogContent, TextField } from '@mui/material';
 import DialogTitle from '@/components/custom/DialogTitle.tsx';
 import Button from '@/components/custom/Button.tsx';
 import UserService from '@/services/UserService.ts';
@@ -50,7 +50,7 @@ export default function ChangePasswordModal() {
       }}
       maxWidth={'xs'}
       fullWidth>
-      <DialogTitle onClose={handleClose}>Change Profile Picture</DialogTitle>
+      <DialogTitle onClose={handleClose}>Change Email</DialogTitle>
       <DialogContent>
         <Box className='my-2 flex flex-col justify-center items-center gap-4'>
           <TextField
@@ -58,16 +58,14 @@ export default function ChangePasswordModal() {
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             fullWidth
-            label='Your new email'
+            placeholder='Your new email'
             error={isError}
           />
         </Box>
-      </DialogContent>
-      <DialogActions>
-        <Button onClick={handleSubmit} disabled={!email || isError}>
+        <Button className='self-end' onClick={handleSubmit} disabled={!email || isError} fullWidth>
           Submit
         </Button>
-      </DialogActions>
+      </DialogContent>
     </Dialog>
   );
 }

@@ -1,4 +1,4 @@
-import { Avatar, Dialog, DialogActions, DialogContent } from '@mui/material';
+import { Avatar, Box, Dialog, DialogContent } from '@mui/material';
 import DialogTitle from '@/components/custom/DialogTitle.tsx';
 import { useEffect, useState } from 'react';
 import { eventEmitter, EventName } from '@/utils/eventemitter.ts';
@@ -67,26 +67,26 @@ export default function ChangeProfilePicModal() {
       maxWidth={'xs'}
       fullWidth>
       <DialogTitle onClose={handleClose}>Change Profile Picture</DialogTitle>
-      <DialogContent className='flex flex-col justify-center items-center gap-4'>
+      <DialogContent className='flex flex-col justify-center items-center gap-8'>
         <Avatar
           src={file ? URL.createObjectURL(file) : profilePicUrl}
           sx={{ width: 240, height: 240, border: '2px solid black' }}></Avatar>
+        <Box className='flex flex-col gap-4 w-full'>
+          <Button component='label' role={undefined} tabIndex={-1} fullWidth>
+            Upload Photo
+            <VisuallyHiddenInput
+              type='file'
+              accept='image/*'
+              name='image'
+              multiple={false}
+              onChange={(event) => setFile(event.target.files![0])}
+            />
+          </Button>
+          <Button onClick={handleSubmit} disabled={!file} fullWidth>
+            Apply
+          </Button>
+        </Box>
       </DialogContent>
-      <DialogActions>
-        <Button component='label' role={undefined} tabIndex={-1}>
-          Upload Photo
-          <VisuallyHiddenInput
-            type='file'
-            accept='image/*'
-            name='image'
-            multiple={false}
-            onChange={(event) => setFile(event.target.files![0])}
-          />
-        </Button>
-        <Button onClick={handleSubmit} disabled={!file}>
-          Apply
-        </Button>
-      </DialogActions>
     </Dialog>
   );
 }
