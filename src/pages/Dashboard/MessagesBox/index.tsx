@@ -17,7 +17,7 @@ export default function MessagesBox() {
   };
 
   return (
-    <Box className='h-[40rem] w-[45rem] border-2 border-black rounded-2xl shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]'>
+    <Box className='h-[40rem] w-[45rem] border-2 border-black rounded-2xl shadow-custom bg-white'>
       <Box className='flex flex-col gap-4 p-4'>
         <TextField value={friendQuery} onChange={(e) => setFriendQuery(e.target.value)} placeholder='username' />
         <Box className='flex flex-col gap-2'>

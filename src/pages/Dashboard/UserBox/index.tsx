@@ -9,12 +9,15 @@ import { fromNow } from '@/utils/date.ts';
 import SandboxProvider from '@/providers/SandboxProvider.tsx';
 import SandBox from '@/pages/Dashboard/SandBox.tsx';
 import { eventEmitter, EventName } from '@/utils/eventemitter.ts';
-import ChangeProfilePicModal from '@/pages/Dashboard/ChangeProfilePicModal.tsx';
+import ChangeProfilePicModal from '@/pages/Dashboard/UserBox/ChangeProfilePicModal.tsx';
 import { PencilEdit01Icon } from '@/components/shared/icons.tsx';
+import ProfileSettingButton from '@/pages/Dashboard/UserBox/ProfileSettingButton.tsx';
+import ChangePasswordModal from '@/pages/Dashboard/UserBox/ChangePasswordModal.tsx';
+import ChangeEmailModal from '@/pages/Dashboard/UserBox/ChangeEmailModal.tsx';
 
 export default function UserBox() {
   const { authToken } = useAuthenticationContext();
-  const { username, elo, friends, requests, profilePicUrl } = useUserInformationContext();
+  const { username, elo, friends, requests, profilePicUrl, email } = useUserInformationContext();
   const largeScreen = useMediaQuery('(min-width:640px)');
   const [games, setGames] = useState<Game[]>();
   const [viewsGame, setViewsGame] = useState<Game>();
@@ -34,8 +37,9 @@ export default function UserBox() {
 
   return (
     <>
-      <Box className='h-[40rem] w-[45rem] border-2 border-black rounded-2xl shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]'>
-        <Box className='flex flex-col items-center justify-around gap-8 p-8'>
+      <Box className='h-[40rem] w-[45rem] border-2 border-black rounded-2xl shadow-custom bg-white'>
+        <Box className='flex flex-col items-center justify-around gap-8 p-8 relative'>
+          <ProfileSettingButton />
           <Badge
             overlap='circular'
             anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
@@ -61,10 +65,13 @@ export default function UserBox() {
             <Box className='flex justify-between gap-10'>
               <Box>
                 <Box component='h2' className=''>
-                  userz: <strong>{username}</strong>
+                  username: <strong>{username}</strong>
                 </Box>
                 <Box component='h2' className=''>
                   elo: <strong>{elo}</strong>
+                </Box>
+                <Box component='h2' className=''>
+                  email: <strong>{email}</strong>
                 </Box>
               </Box>
               <Box>
@@ -73,6 +80,9 @@ export default function UserBox() {
                 </Box>
                 <Box>
                   requests_num: <strong>{requests?.length}</strong>
+                </Box>
+                <Box>
+                  games_num: <strong>{0}</strong>
                 </Box>
               </Box>
             </Box>
@@ -109,6 +119,8 @@ export default function UserBox() {
         </Box>
       </Box>
       <ChangeProfilePicModal />
+      <ChangePasswordModal />
+      <ChangeEmailModal />
     </>
   );
 }

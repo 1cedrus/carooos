@@ -33,7 +33,7 @@ export default function NavigationBar() {
   }, 0);
 
   return (
-    <Box className='flex flex-col h-fit justify-around items-center gap-2 p-2 border-2 border-black rounded-2xl shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]'>
+    <Box className='flex flex-col h-fit justify-around items-center gap-2 p-2 border-2 border-black rounded-2xl shadow-custom bg-white'>
       {TAB_LIST.map(({ tab, icon }) => (
         <IconButton
           key={tab}

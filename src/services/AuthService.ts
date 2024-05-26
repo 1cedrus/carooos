@@ -1,4 +1,5 @@
 import {
+  CHANGE_PASSWORD_URL,
   COMPLETE_RESET_PASSWORD_URL,
   RESET_PASSWORD_URL,
   SIGNIN_URL,
@@ -21,6 +22,11 @@ export interface Credential {
   password: string;
 }
 
+export interface ChangePasswordInfo {
+  oldPassword: string;
+  newPassword: string;
+}
+
 class AuthService extends BaseService {
   async signIn(credential: Credential) {
     const response = await http.post(SIGNIN_URL, JSON.stringify(credential));
@@ -38,6 +44,12 @@ class AuthService extends BaseService {
     const response = await http.post(VERIFY_URL, JSON.stringify({ token: authToken }));
 
     return this.handleResponse(response);
+  }
+
+  async changePassword(info: ChangePasswordInfo, authToken: string) {
+    const response = await http.post(CHANGE_PASSWORD_URL, JSON.stringify(info), authToken);
+
+    return this.isAccepted(response);
   }
 
   async getToken(info: ResetPasswordInfo) {

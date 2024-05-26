@@ -28,7 +28,7 @@ export default function Dashboard() {
 
   return (
     <>
-      <Box className='flex h-screen gap-4 justify-center items-center'>
+      <Box className='flex h-screen gap-4 justify-center items-center '>
         <Box className='flex gap-2'>
           <NavigationBar />
           <Outlet />

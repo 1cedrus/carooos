@@ -22,3 +22,5 @@ export const RESET_PASSWORD_URL = `${HTTP}/api/auth/reset-password`;
 export const VERIFY_EMAIL_URL = `${HTTP}/api/auth/reset-password/verify`;
 export const COMPLETE_RESET_PASSWORD_URL = `${HTTP}/api/auth/reset-password/complete`;
 export const CHANGE_PROFILE_PIC = `${HTTP}/api/user/profile-picture`;
+export const CHANGE_PASSWORD_URL = `${HTTP}/api/auth/change-password`;
+export const CHANGE_EMAIL_URL = `${HTTP}/api/user/email`;

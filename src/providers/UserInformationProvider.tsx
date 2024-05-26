@@ -17,6 +17,7 @@ export interface UserInformationContext {
   setConversations: Dispatch<SetStateAction<ConversationInfo[]>>;
   currentGame: string;
   setCurrentGame: Dispatch<SetStateAction<string>>;
+  email?: string;
 }
 
 export const UserInformationContext = createContext<UserInformationContext>({} as UserInformationContext);
@@ -34,12 +35,13 @@ export default function UserInformationProvider({ children }: Props) {
   const [conversations, setConversations] = useState<ConversationInfo[]>([]);
   const [currentGame, setCurrentGame] = useState<string>('');
   const [profilePicUrl, setProfilePicUrl] = useState<string>('');
+  const [email, setEmail] = useState<string>();
 
   const doFetchInfo = async () => {
     if (!isAuthenticated) return;
 
     try {
-      const { username, elo, friends, requests, conversations, currentGame, profilePicUrl } =
+      const { username, elo, friends, requests, conversations, currentGame, profilePicUrl, email } =
         await UserService.getUserInfo(authToken);
 
       setUsername(username);
@@ -48,6 +50,7 @@ export default function UserInformationProvider({ children }: Props) {
       setRequests(requests);
       setCurrentGame(currentGame);
       setProfilePicUrl(`${IMAGE_URL}/${profilePicUrl}`);
+      setEmail(email);
       setConversations(
         conversations.map((conversation: ConversationInfo) => ({
           ...conversation,
@@ -93,6 +96,7 @@ export default function UserInformationProvider({ children }: Props) {
         currentGame,
         setCurrentGame,
         profilePicUrl,
+        email,
       }}>
       {children}
     </UserInformationContext.Provider>

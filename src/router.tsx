@@ -3,7 +3,7 @@ import Authentication from '@/pages/Authentication';
 import Dashboard from '@/pages/Dashboard';
 import Home from '@/pages/Home.tsx';
 import ErrorPage from '@/pages/ErrorPage.tsx';
-import UserBox from '@/pages/Dashboard/UserBox.tsx';
+import UserBox from '@/pages/Dashboard/UserBox';
 import MessagesBox from '@/pages/Dashboard/MessagesBox';
 import FriendsBox from '@/pages/Dashboard/FriendsBox';
 import PlayBox from '@/pages/Dashboard/PlayBox';

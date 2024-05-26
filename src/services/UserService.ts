@@ -1,5 +1,6 @@
 import http from '@/utils/http.ts';
 import {
+  CHANGE_EMAIL_URL,
   CHANGE_PROFILE_PIC,
   PUBLIC_USER_INFORMATION_URL,
   PUBLIC_USERS_INFORMATION_URL,
@@ -37,6 +38,12 @@ class UserService extends BaseService {
     const response = await http.post(CHANGE_PROFILE_PIC, formData, authToken, false);
 
     return this.handleResponse(response);
+  }
+
+  async changeEmail(authToken: string, email: string) {
+    const response = await http.post(CHANGE_EMAIL_URL, JSON.stringify({ email }), authToken);
+
+    return this.isAccepted(response);
   }
 }
 
