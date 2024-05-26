@@ -8,9 +8,9 @@ import { Game } from '@/types.ts';
 import { fromNow } from '@/utils/date.ts';
 import SandboxProvider from '@/providers/SandboxProvider.tsx';
 import SandBox from '@/pages/Dashboard/SandBox.tsx';
-import { PencilEdit01Icon } from '@/components/icons.tsx';
 import { eventEmitter, EventName } from '@/utils/eventemitter.ts';
 import ChangeProfilePicDialog from '@/pages/Dashboard/ChangeProfilePicDialog.tsx';
+import { PencilEdit01Icon } from '@/components/shared/icons.tsx';
 
 export default function UserBox() {
   const { authToken } = useAuthenticationContext();

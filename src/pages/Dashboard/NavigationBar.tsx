@@ -1,13 +1,8 @@
 import { Badge, Box, IconButton } from '@mui/material';
-import LeaveIcon from '@/components/icons/LeaveIcon.tsx';
-import UserIcon from '@/components/icons/UserIcon.tsx';
-import MessageIcon from '@/components/icons/MessageIcon.tsx';
-import FriendsIcon from '@/components/icons/FriendsIcon.tsx';
-import PlayIcon from '@/components/icons/PlayIcon.tsx';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useUserInformationContext } from '@/providers/UserInformationProvider.tsx';
 import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
-import SandboxIcon from '@/components/icons/SandboxIcon.tsx';
+import { MessageIcon, PlayIcon, SandboxIcon, UserIcon, FriendsIcon, LeaveIcon } from '@/components/shared/icons.tsx';
 
 enum TabPath {
   User = 'user',
