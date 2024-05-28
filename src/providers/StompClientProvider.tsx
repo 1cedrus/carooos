@@ -87,7 +87,7 @@ export default function StompClientProvider({ children }: Props) {
       friendsSub.unsubscribe();
       onlineTrackingSub.unsubscribe();
     };
-  }, [stompClient]);
+  }, [stompClient, isConnected]);
 
   return <StompClientContext.Provider value={{ stompClient, isConnected }}>{children}</StompClientContext.Provider>;
 }

@@ -32,7 +32,7 @@ export const useGameContext = () => {
 
 export default function GameProvider({ children }: Props) {
   const { currentGame: roomCode, username } = useUserInformationContext();
-  const { stompClient } = useStompClientContext();
+  const { stompClient, isConnected } = useStompClientContext();
   const [nextMove, setNextMove] = useState<string>();
   const [currentMoves, setCurrentMoves] = useState<number[]>([]);
   const [firstUser, secondUser] = [username!, roomCode.split('-').find((user) => user !== username)!];
@@ -92,7 +92,7 @@ export default function GameProvider({ children }: Props) {
     return () => {
       sub.unsubscribe();
     };
-  }, [stompClient, roomCode]);
+  }, [stompClient, roomCode, isConnected]);
 
   const doMove = (move: number) => {
     if (nextMove !== username || currentMoves.includes(move)) {

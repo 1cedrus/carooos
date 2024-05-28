@@ -6,6 +6,7 @@ import ConversationService from '@/services/ConversationService.ts';
 import { useAsync } from 'react-use';
 import { useUserInformationContext } from '@/providers/UserInformationProvider.tsx';
 import { eventEmitter, EventName } from '@/utils/eventemitter.ts';
+import { useStompClientContext } from '@/providers/StompClientProvider.tsx';
 
 interface MessagesContext {
   conversations?: ConversationInfo[];
@@ -21,6 +22,7 @@ export const useMessagesContext = () => {
 
 export default function MessagesProvider({ children }: Props) {
   const { authToken } = useAuthenticationContext();
+  const { isConnected } = useStompClientContext();
   const { username } = useUserInformationContext();
   const [conversations, setConversations] = useState<ConversationInfo[]>([]);
 
@@ -56,7 +58,7 @@ export default function MessagesProvider({ children }: Props) {
     } else {
       await fetchConversations();
     }
-  }, [authToken, username]);
+  }, [authToken, username, isConnected]);
 
   const onMessages = (messages: ChatMessage) => {
     setConversations((pre) => {

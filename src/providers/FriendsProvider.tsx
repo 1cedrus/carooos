@@ -26,7 +26,7 @@ export const useFriendsContext = () => {
 export default function FriendsProvider({ children }: Props) {
   const { authToken } = useAuthenticationContext();
   const { currentGame, username } = useUserInformationContext();
-  const { stompClient } = useStompClientContext();
+  const { stompClient, isConnected } = useStompClientContext();
   const [friends, setFriends] = useState<FriendInformation[]>([]);
   const [requests, setRequests] = useState<string[]>([]);
 
@@ -138,7 +138,7 @@ export default function FriendsProvider({ children }: Props) {
     } else {
       await fetchFriendsData();
     }
-  }, [authToken]);
+  }, [authToken, isConnected]);
 
   return <FriendsContext.Provider value={{ friends, requests }}>{children}</FriendsContext.Provider>;
 }
