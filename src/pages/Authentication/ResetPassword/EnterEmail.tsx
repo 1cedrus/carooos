@@ -1,10 +1,10 @@
 import { Box, TextField } from '@mui/material';
-import Button from '@/components/custom/Button.tsx';
 import { Props } from '@/types.ts';
 import AuthService from '@/services/AuthService.ts';
 import { toast } from 'react-toastify';
 import { ResetPasswordSteps } from '@/pages/Authentication/ResetPassword/ResetPasswordStepper.tsx';
 import { useState } from 'react';
+import { LoadingButton } from '@mui/lab';
 
 interface EnterEmailProps extends Props {
   email: string;
@@ -38,9 +38,16 @@ export default function EnterEmail({ email, setEmail, setActiveStep }: EnterEmai
         autoFocus
         error={!!email && !/.+@.+\..+/.test(email)}
       />
-      <Button onClick={handleSubmit} disabled={onSubmit || !email || !/.+@.+\..+/.test(email)}>
+      <LoadingButton
+        className='shadow-custom'
+        variant='outlined'
+        sx={{ bgcolor: 'white', borderColor: 'black', color: 'black', '&:hover': { bgcolor: 'white' } }}
+        onClick={handleSubmit}
+        disabled={!email || !/.+@.+\..+/.test(email)}
+        loading={onSubmit}
+        loadingIndicator='Verifying...'>
         Submit
-      </Button>
+      </LoadingButton>
     </Box>
   );
 }

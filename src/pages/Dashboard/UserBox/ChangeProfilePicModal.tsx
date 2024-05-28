@@ -91,6 +91,9 @@ export default function ChangeProfilePicModal() {
             onClick={handleSubmit}
             disabled={!file}
             fullWidth
+            className='shadow-custom'
+            variant='outlined'
+            sx={{ bgcolor: 'white', borderColor: 'black', color: 'black', '&:hover': { bgcolor: 'white' } }}
             loading={onLoading}
             loadingIndicator='Applying...'>
             Apply
