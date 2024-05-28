@@ -8,9 +8,10 @@ import MessagesBox from '@/pages/Dashboard/MessagesBox';
 import FriendsBox from '@/pages/Dashboard/FriendsBox';
 import PlayBox from '@/pages/Dashboard/PlayBox';
 import Game from '@/pages/Game';
-import ChatBox from '@/pages/Dashboard/ChatBox.tsx';
 import SandBox from '@/pages/Dashboard/SandBox.tsx';
 import ResetPassword from '@/pages/Authentication/ResetPassword';
+import LeaderBoard from '@/pages/Dashboard/PlayBox/LeaderBoard.tsx';
+import ChatBox from '@/pages/Dashboard/MessagesBox/ChatBox.tsx';
 
 export default createBrowserRouter(
   createRoutesFromElements([
@@ -25,6 +26,7 @@ export default createBrowserRouter(
         <Route path='messages/:cid' element={<ChatBox />}></Route>
         <Route path='friends' element={<FriendsBox />}></Route>
         <Route path='play' element={<PlayBox />}></Route>
+        <Route path='play/leader-board' element={<LeaderBoard />}></Route>
         <Route path='game/:roomCode' element={<Game />}></Route>
         <Route path='sandbox' element={<SandBox />}></Route>
       </Route>

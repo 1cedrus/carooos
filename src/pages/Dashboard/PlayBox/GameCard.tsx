@@ -1,9 +1,13 @@
 import { Box } from '@mui/material';
-import { useStompClientContext } from '@/providers/StompClientProvider.tsx';
 import Button from '@/components/custom/Button.tsx';
+import { useQueueContext } from '@/providers/QueueProvider.tsx';
+import { useStompClientContext } from '@/providers/StompClientProvider.tsx';
+import { useNavigate } from 'react-router-dom';
 
 export default function GameCard() {
-  const { doQueue, quitQueue, onQueue, stompClient } = useStompClientContext();
+  const navigate = useNavigate();
+  const { stompClient } = useStompClientContext();
+  const { doQueue, quitQueue, onQueue } = useQueueContext();
 
   return (
     <Box className='flex-auto flex flex-col border-black border-[1px] gap-4 justify-between items-center p-4 rounded-xl'>
@@ -53,7 +57,7 @@ export default function GameCard() {
           )}
         </>
         <Button
-          onClick={quitQueue}
+          onClick={() => navigate('leader-board')}
           fullWidth
           textClassName='text-xl font-semibold'
           className='rounded-xl shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]'>

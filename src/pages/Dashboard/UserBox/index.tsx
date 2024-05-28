@@ -1,6 +1,6 @@
 import { Avatar, Badge, Box, Divider, IconButton, useMediaQuery } from '@mui/material';
 import { useUserInformationContext } from '@/providers/UserInformationProvider.tsx';
-import useAsync from '@/hooks/useAsync.ts';
+import { useAsync } from 'react-use';
 import GameService from '@/services/GameService.ts';
 import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
 import { useState } from 'react';
@@ -14,17 +14,21 @@ import { PencilEdit01Icon } from '@/components/shared/icons.tsx';
 import ProfileSettingButton from '@/pages/Dashboard/UserBox/ProfileSettingButton.tsx';
 import ChangePasswordModal from '@/pages/Dashboard/UserBox/ChangePasswordModal.tsx';
 import ChangeEmailModal from '@/pages/Dashboard/UserBox/ChangeEmailModal.tsx';
+import { useFriendsContext } from '@/providers/FriendsProvider.tsx';
 
 export default function UserBox() {
   const { authToken } = useAuthenticationContext();
-  const { username, elo, friends, requests, profilePicUrl, email } = useUserInformationContext();
+  const { username, elo, profilePicUrl, email } = useUserInformationContext();
+  const { friends, requests } = useFriendsContext();
   const largeScreen = useMediaQuery('(min-width:640px)');
   const [games, setGames] = useState<Game[]>();
   const [viewsGame, setViewsGame] = useState<Game>();
+  const [total, setTotal] = useState(0);
 
   useAsync(async () => {
-    const { items } = await GameService.listHistory(authToken);
+    const { items, total } = await GameService.listHistory(authToken);
     setGames(items);
+    setTotal(total);
   }, []);
 
   if (viewsGame) {
@@ -83,38 +87,44 @@ export default function UserBox() {
                   requests_num: <strong>{requests?.length}</strong>
                 </Box>
                 <Box>
-                  games_num: <strong>{0}</strong>
+                  games_num: <strong>{total}</strong>
                 </Box>
               </Box>
             </Box>
           </Box>
-          <Box className='w-full'>
+          <Box className='w-full h-full'>
             <strong>History</strong>
             <Divider />
-            <Box className='flex flex-col gap-2 mt-2 h-[18rem] overflow-auto'>
-              {games?.map((game) => (
-                <Box
-                  onClick={() => setViewsGame(game)}
-                  key={game.id}
-                  className='flex justify-between cursor-pointer border-[1px] border-black rounded p-2 shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]'>
-                  <Box>
-                    <Box className=''>
-                      opponent: <strong>{game.roomCode.split('-').find((o) => o !== username)}</strong>
+            <Box className='h-[17rem]'>
+              <Box className='h-full overflow-y-auto flex flex-col gap-2 mt-2'>
+                {games?.length ? (
+                  games?.map((game) => (
+                    <Box
+                      onClick={() => setViewsGame(game)}
+                      key={game.id}
+                      className='flex justify-between cursor-pointer border-[1px] border-black rounded p-2 shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]'>
+                      <Box>
+                        <Box className=''>
+                          opponent: <strong>{game.roomCode.split('-').find((o) => o !== username)}</strong>
+                        </Box>
+                        <Box component='h2'>
+                          played_at: <strong>{fromNow(Date.parse(game.playedAt))} </strong>
+                        </Box>
+                      </Box>
+                      <Box>
+                        <Box component='h2'>
+                          first_move: <strong>{game.firstMoveUser} </strong>
+                        </Box>
+                        <Box component='h2'>
+                          winner: <strong>{game.winner || 'none'} </strong>
+                        </Box>
+                      </Box>
                     </Box>
-                    <Box component='h2'>
-                      played_at: <strong>{fromNow(Date.parse(game.playedAt))} </strong>
-                    </Box>
-                  </Box>
-                  <Box>
-                    <Box component='h2'>
-                      first_move: <strong>{game.firstMoveUser} </strong>
-                    </Box>
-                    <Box component='h2'>
-                      winner: <strong>{game.winner || 'none'} </strong>
-                    </Box>
-                  </Box>
-                </Box>
-              ))}
+                  ))
+                ) : (
+                  <Box className='text-center'>You have not done any match!</Box>
+                )}
+              </Box>
             </Box>
           </Box>
         </Box>

@@ -9,28 +9,37 @@ import { globalStyles } from '@/styles';
 import { ToastContainer } from 'react-toastify';
 import GameProvider from '@/providers/GameProvider.tsx';
 import SandboxProvider from '@/providers/SandboxProvider.tsx';
+import MessagesProvider from '@/providers/MessagesProvider.tsx';
+import FriendsProvider from '@/providers/FriendsProvider.tsx';
+import QueueProvider from '@/providers/QueueProvider.tsx';
 
 export default function App() {
   return (
     <AuthenticationProvider>
       <UserInformationProvider>
         <StompClientProvider>
-          <SandboxProvider>
-            <GameProvider>
-              <ThemeProvider theme={theme}>
-                <CssBaseline />
-                <GlobalStyles styles={globalStyles} />
-                <RouterProvider router={router} />
-                <ToastContainer
-                  toastClassName='border-2 border-black'
-                  position='top-right'
-                  autoClose={3000}
-                  newestOnTop
-                  closeOnClick
-                />
-              </ThemeProvider>
-            </GameProvider>
-          </SandboxProvider>
+          <QueueProvider>
+            <MessagesProvider>
+              <FriendsProvider>
+                <SandboxProvider>
+                  <GameProvider>
+                    <ThemeProvider theme={theme}>
+                      <CssBaseline />
+                      <GlobalStyles styles={globalStyles} />
+                      <RouterProvider router={router} />
+                      <ToastContainer
+                        toastClassName='border-2 border-black'
+                        position='top-right'
+                        autoClose={3000}
+                        newestOnTop
+                        closeOnClick
+                      />
+                    </ThemeProvider>
+                  </GameProvider>
+                </SandboxProvider>
+              </FriendsProvider>
+            </MessagesProvider>
+          </QueueProvider>
         </StompClientProvider>
       </UserInformationProvider>
     </AuthenticationProvider>

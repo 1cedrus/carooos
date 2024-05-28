@@ -21,6 +21,7 @@ export interface GameContext {
   secondUser: string;
   inGameChat?: InGameChatMessage[];
   doMove: (move: number) => void;
+  lastMoveTimeStamp: number;
 }
 
 export const GameContext = createContext<GameContext>({} as GameContext);
@@ -36,6 +37,7 @@ export default function GameProvider({ children }: Props) {
   const [currentMoves, setCurrentMoves] = useState<number[]>([]);
   const [firstUser, secondUser] = [username!, roomCode.split('-').find((user) => user !== username)!];
   const [inGameChat, setInGameChat] = useState<InGameChatMessage[]>([]);
+  const [lastMoveTimeStamp, setLastMoveTimeStamp] = useState<number>(0);
 
   useEffect(() => {
     setCurrentMoves([]);
@@ -50,11 +52,13 @@ export default function GameProvider({ children }: Props) {
     const handleJoinMessage = (msg: JoinMessage) => {
       setNextMove(msg.nextMove);
       setCurrentMoves(msg.currentMoves);
+      setLastMoveTimeStamp(msg.lastMoveTimeStamp ? Date.parse(msg.lastMoveTimeStamp) + 7 * 60 * 60 * 1000 : Date.now());
     };
 
     const handleMoveMessage = (msg: MoveMessage) => {
       setCurrentMoves((pre) => [...pre, msg.move]);
       setNextMove(msg.nextMove);
+      setLastMoveTimeStamp(Date.parse(msg.lastMoveTimeStamp) + 7 * 60 * 60 * 1000);
     };
 
     const handleFinishMessage = (msg: FinishMessage) => {
@@ -99,7 +103,8 @@ export default function GameProvider({ children }: Props) {
   };
 
   return (
-    <GameContext.Provider value={{ roomCode, nextMove, currentMoves, firstUser, secondUser, doMove, inGameChat }}>
+    <GameContext.Provider
+      value={{ roomCode, nextMove, currentMoves, firstUser, secondUser, doMove, inGameChat, lastMoveTimeStamp }}>
       {children}
     </GameContext.Provider>
   );

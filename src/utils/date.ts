@@ -8,5 +8,5 @@ dayjs.extend(UTC);
 dayjs.extend(timeZone);
 
 export const fromNow = (timestamp: number) => {
-  return dayjs(timestamp).fromNow();
+  return dayjs(timestamp + 7 * 60 * 60 * 1000).fromNow();
 };

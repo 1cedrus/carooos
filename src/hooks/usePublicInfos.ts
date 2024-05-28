@@ -1,6 +1,6 @@
 import { PublicInformation } from '@/types.ts';
 import { useState } from 'react';
-import useAsync from '@/hooks/useAsync.ts';
+import { useAsync } from 'react-use';
 import UserService from '@/services/UserService.ts';
 
 export default function usePublicInfos(query: string): PublicInformation[] {

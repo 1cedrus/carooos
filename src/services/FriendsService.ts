@@ -14,6 +14,12 @@ class FriendsService extends BaseService {
 
     return this.isAccepted(response);
   }
+
+  async list(authToken: string) {
+    const response = await http.get(`${FRIEND_URL}`, authToken);
+
+    return this.handleResponse(response);
+  }
 }
 
 export default new FriendsService();

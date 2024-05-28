@@ -16,6 +16,8 @@ export enum EventName {
 
   ReloadInfo = 'ReloadInfo',
   NavigateTo = 'NavigateTo',
+  ReloadFriends = 'ReloadFriends',
+  ReloadConversation = 'ReloadConversation',
 
   OnTopicMessages = 'OnTopicMessages',
   OnTopicFriends = 'OnTopicFriends',

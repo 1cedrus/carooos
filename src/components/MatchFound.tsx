@@ -4,17 +4,15 @@ import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'react-toastify';
-import { useUserInformationContext } from '@/providers/UserInformationProvider.tsx';
 import Button from '@/components/custom/Button.tsx';
 import { eventEmitter, EventName } from '@/utils/eventemitter.ts';
 import { useGameContext } from '@/providers/GameProvider.tsx';
-import { useStompClientContext } from '@/providers/StompClientProvider.tsx';
+import { useQueueContext } from '@/providers/QueueProvider.tsx';
 
 export default function MatchFound() {
   const navigate = useNavigate();
-  const { quitQueue } = useStompClientContext();
   const { nextMove } = useGameContext();
-  const { setCurrentGame } = useUserInformationContext();
+  const { quitQueue, doJoinGame, resetProgress } = useQueueContext();
   const [roomCode, setRoomCode] = useState('');
   const [progress, setProgress] = useState(100);
   const [open, setOpen] = useState(false);
@@ -22,31 +20,45 @@ export default function MatchFound() {
   const [firstUser, secondUser] = roomCode.split('-');
 
   useEffect(() => {
-    if (open && progress <= -50) {
+    if (progress <= -50) {
       toast.error(
         onWaiting
           ? 'Failed to matching, maybe the other player not accept the match.'
           : 'Out of time to accept the match.',
       );
+
       setOpen(false);
       setOnWaiting(false);
+      resetProgress();
+      !onWaiting && quitQueue();
     }
   }, [progress]);
 
   useEffect(() => {
     if (!open) return;
+
     const timer = setInterval(() => {
       setProgress((pre) => pre - 5);
     }, 250);
 
     return () => {
       clearInterval(timer);
+      setProgress(100);
     };
   }, [open]);
 
+  const doAccept = () => {
+    setOnWaiting(true);
+    doJoinGame(roomCode);
+  };
+
+  const doRefuse = () => {
+    setOpen(false);
+    quitQueue();
+  };
+
   useEffect(() => {
     const showPopup = (roomCode: string) => {
-      setProgress(100);
       setRoomCode(roomCode);
       setOpen(true);
     };
@@ -60,17 +72,12 @@ export default function MatchFound() {
 
   useEffect(() => {
     if (onWaiting && nextMove) {
+      quitQueue();
       setOpen(false);
       setOnWaiting(false);
-      quitQueue();
       navigate(`/play`);
     }
   }, [nextMove]);
-
-  const doAccept = () => {
-    setOnWaiting(true);
-    setCurrentGame(roomCode);
-  };
 
   return (
     <Modal open={open} onClose={() => {}}>
@@ -91,17 +98,14 @@ export default function MatchFound() {
             onClick={doAccept}
             disabled={onWaiting}
             textClassName='font-bold text-xl'
-            className='shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset] w-full'>
+            className='shadow-custom w-full'>
             Accept
           </Button>
           <Button
-            onClick={() => {
-              setOpen(false);
-              quitQueue();
-            }}
+            onClick={doRefuse}
             disabled={onWaiting}
             textClassName='font-bold text-xl'
-            className='shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset] w-full'>
+            className='shadow-custom w-full'>
             Refuse
           </Button>
         </Box>

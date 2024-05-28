@@ -2,6 +2,7 @@ import http from '@/utils/http.ts';
 import {
   CHANGE_EMAIL_URL,
   CHANGE_PROFILE_PIC,
+  LEADER_BOARD_URL,
   PUBLIC_USER_INFORMATION_URL,
   PUBLIC_USERS_INFORMATION_URL,
   USER_INFORMATION_URL,
@@ -21,6 +22,12 @@ class UserService extends BaseService {
 
   async getPublicInfo(username: string) {
     const response = await http.get(`${PUBLIC_USER_INFORMATION_URL}?username=${username}`);
+
+    return this.handleResponse(response);
+  }
+
+  async getLeaderBoard() {
+    const response = await http.get(`${LEADER_BOARD_URL}`);
 
     return this.handleResponse(response);
   }

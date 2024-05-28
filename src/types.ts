@@ -51,11 +51,13 @@ export interface InGameChatMessage extends GameMessage {
 export interface JoinMessage extends GameMessage {
   currentMoves: number[];
   nextMove: string;
+  lastMoveTimeStamp: string;
 }
 
 export interface MoveMessage extends GameMessage {
   move: number;
   nextMove: string;
+  lastMoveTimeStamp: string;
 }
 
 export interface FinishMessage extends GameMessage {
@@ -65,6 +67,7 @@ export interface FinishMessage extends GameMessage {
 export interface PublicInformation {
   username: string;
   elo: number;
+  profilePicUrl: string;
 }
 
 export enum FriendsMessageType {
@@ -89,8 +92,9 @@ export interface ChatMessage {
 export interface ConversationInfo {
   cid: number;
   peers: string[];
-  seen: boolean;
   lastMessage?: ChatMessage;
+  numberOfUnseen: number;
+  numberOfMessages: number;
 }
 
 export interface Pagination<Item> {
@@ -122,4 +126,14 @@ export interface ResetPasswordInfo {
   email?: string;
   token?: string;
   newPassword?: string;
+}
+
+export interface FriendInformation {
+  username: string;
+  isOnline: boolean;
+}
+
+export interface UserFriendData {
+  friends: FriendInformation[];
+  requests: string[];
 }

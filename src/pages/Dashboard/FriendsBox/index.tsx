@@ -12,6 +12,7 @@ import LocalFireDepartmentIcon from '@mui/icons-material/LocalFireDepartment';
 import { toast } from 'react-toastify';
 import UserService from '@/services/UserService.ts';
 import TextField from '@/components/custom/TextField.tsx';
+import { useFriendsContext } from '@/providers/FriendsProvider.tsx';
 
 enum FriendsMode {
   View,
@@ -28,22 +29,20 @@ export default function FriendsBox() {
   };
 
   return (
-    <Box className='h-[40rem] w-[45rem] border-2 border-black rounded-2xl shadow-custom bg-white'>
+    <Box className='h-[40rem] w-[45rem] border-2 border-black rounded-2xl shadow-custom bg-white '>
       <Box className='flex flex-col gap-4 p-4'>
         <Box className='flex gap-2'>
-          <TextField value={query} onChange={(e) => setQuery(e.target.value)} placeholder='Search username....' />
+          <TextField value={query} onChange={(e) => setQuery(e.target.value)} placeholder='Search friends....' />
           <Box
-            title='add friends'
+            title='Add friends'
             component='button'
             onClick={() => switchMode(mode === FriendsMode.Add ? FriendsMode.View : FriendsMode.Add)}
             className={`border-[1px] rounded px-2 border-black shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]  ${mode === FriendsMode.Add ? 'border-black' : ''}`}>
             {mode === FriendsMode.Add ? <CloseOutlinedIcon /> : <AddOutlinedIcon />}
           </Box>
         </Box>
-        <Box className='flex-auto overflow-auto'>
-          <Box className='h-full flex flex-col gap-2'>
-            <FriendDispatcher mode={mode} query={query} />
-          </Box>
+        <Box className='h-[34rem] flex flex-col gap-2 overflow-auto'>
+          <FriendDispatcher mode={mode} query={query} />
         </Box>
       </Box>
     </Box>
@@ -57,7 +56,8 @@ interface FriendDispatcherProps extends Props {
 
 function FriendDispatcher({ mode, query }: FriendDispatcherProps) {
   const { stompClient } = useStompClientContext();
-  const { username, friends = [], requests = [] } = useUserInformationContext();
+  const { username } = useUserInformationContext();
+  const { friends, requests } = useFriendsContext();
   const [searchUsers, setSearchUsers] = useState<PublicInformation[]>([]);
   const [onInvite, setOnInvite] = useState(false);
 
@@ -69,8 +69,10 @@ function FriendDispatcher({ mode, query }: FriendDispatcherProps) {
         const usersData = (await UserService.getPublicInfos(query)) as PublicInformation[];
         setSearchUsers(
           usersData.filter(
-            ({ username: userData }) =>
-              userData !== username && !friends.includes(userData!) && !requests.includes(userData),
+            ({ username: queryUser }) =>
+              queryUser !== username &&
+              !friends?.map((one) => one.username).includes(queryUser) &&
+              !requests?.includes(queryUser),
           ),
         );
       } catch (_) {}
@@ -102,6 +104,8 @@ function FriendDispatcher({ mode, query }: FriendDispatcherProps) {
         <Box>Your request is sent!</Box>
       </Box>,
     );
+
+    setOnInvite(true);
   };
 
   useEffect(() => {
@@ -113,8 +117,8 @@ function FriendDispatcher({ mode, query }: FriendDispatcherProps) {
     case FriendsMode.Add:
       return (
         <Box className='flex flex-col gap-2'>
-          {searchUsers.map(({ username, elo }) => (
-            <FriendRequestCard key={username} username={username} elo={elo} />
+          {searchUsers.map(({ username, elo, profilePicUrl }) => (
+            <FriendRequestCard key={username} username={username} profilePicUrl={profilePicUrl} elo={elo} />
           ))}
         </Box>
       );
@@ -124,30 +128,34 @@ function FriendDispatcher({ mode, query }: FriendDispatcherProps) {
           <Box>
             <Box className='flex justify-between text-sm mb-2 border-t-2 border-black font-bold'>
               <Box>Requests</Box>
-              <Box>{requests.length}</Box>
+              <Box>{requests?.length}</Box>
             </Box>
             <Box className='flex flex-col gap-2'>
-              {requests.map((sender) => (
-                <FriendResponseCard key={sender} sender={sender} />
-              ))}
+              {requests?.map((sender) => <FriendResponseCard key={sender} sender={sender} />)}
             </Box>
           </Box>
           <Box>
             <Box className='flex justify-between text-sm mb-2 border-t-2 border-black font-bold'>
               <Box>Friends</Box>
-              <Box>{friends.length}</Box>
+              <Box>{friends?.length}</Box>
             </Box>
-            <Box className='flex flex-col gap-2'>
-              {friends
-                .filter((friend) => friend.includes(query))
-                .map((friend) => (
-                  <FriendCard
-                    key={friend}
-                    friend={friend}
-                    action={() => doInvite(friend)}
-                    actionIcon={<LocalFireDepartmentIcon fontSize='small' />}
-                  />
-                ))}
+            <Box className='flex flex-col gap-2 overflow-auto'>
+              {friends?.length ? (
+                friends
+                  .filter((o) => o.username.includes(query))
+                  .map((friend) => (
+                    <FriendCard
+                      key={friend.username}
+                      friend={friend}
+                      action={() => doInvite(friend.username)}
+                      actionIcon={<LocalFireDepartmentIcon fontSize='small' />}
+                    />
+                  ))
+              ) : (
+                <Box className='text-center'>
+                  You don't have any friends, click + on the top right to looking for new friends
+                </Box>
+              )}
             </Box>
           </Box>
         </Box>

@@ -51,7 +51,7 @@ export default function ChangeProfilePicModal() {
       toast.error((e as Error).message);
     }
 
-    setOpen(false);
+    handleClose();
   };
 
   return (
