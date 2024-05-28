@@ -1,4 +1,3 @@
-import NotificationCenter from '@/components/NotificationCenter.tsx';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Box } from '@mui/material';
 
@@ -31,7 +30,6 @@ export default function MainLayout() {
             {isDashboard ? 'CAROOOS!' : 'Back'}
           </Box>
         </Box>
-        <NotificationCenter />
       </Box>
       <Outlet />
     </Box>
