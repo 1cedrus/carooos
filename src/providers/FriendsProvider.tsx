@@ -71,6 +71,7 @@ export default function FriendsProvider({ children }: Props) {
   const onMessages = async (message: FriendsMessage) => {
     switch (message.type) {
       case FriendsMessageType.FriendRequest:
+        triggerEvent(EventName.ReloadConversation);
         return triggerEvent(EventName.ReloadFriends);
       case FriendsMessageType.FriendResponse:
         triggerEvent(EventName.ReloadFriends);

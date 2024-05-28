@@ -23,7 +23,7 @@ export const useUserInformationContext = () => {
 };
 
 export default function UserInformationProvider({ children }: Props) {
-  const { authToken, doLogout } = useAuthenticationContext();
+  const { authToken } = useAuthenticationContext();
   const [username, setUsername] = useState<string>();
   const [elo, setElo] = useState<number>();
   const [currentGame, setCurrentGame] = useState<string>('');
@@ -43,8 +43,6 @@ export default function UserInformationProvider({ children }: Props) {
       setEmail(email);
     } catch (e) {
       toast.error('Some errors occurred while fetching user information');
-
-      doLogout();
     }
   };
 

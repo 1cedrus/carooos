@@ -11,6 +11,7 @@ const RUN_AWAY = 'SOMEONE GOT INTO YOUR ACCOUNT, RUN AWAY!!!';
 
 export interface StompClientContext {
   stompClient?: CompatClient;
+  isConnected?: boolean;
 }
 
 export const StompClientContext = createContext<StompClientContext>({} as StompClientContext);
@@ -21,6 +22,7 @@ export const useStompClientContext = () => {
 
 export default function StompClientProvider({ children }: Props) {
   const { authToken, doLogout } = useAuthenticationContext();
+  const [isConnected, setIsConnected] = useState(false);
   const [stompClient, setStompClient] = useState<CompatClient>();
 
   useEffect(() => {
@@ -31,11 +33,24 @@ export default function StompClientProvider({ children }: Props) {
       {
         Authorization: `Bearer ${authToken}`,
       },
-      () => {
-        stompClient.reconnectDelay = 1000;
-        setStompClient(stompClient);
-      },
+      () => {},
     );
+
+    stompClient.onConnect = () => {
+      stompClient.reconnectDelay = 1000;
+      setIsConnected(true);
+      setStompClient(stompClient);
+    };
+
+    stompClient.onDisconnect = () => {
+      setIsConnected(false);
+    };
+
+    stompClient.onWebSocketClose = () => {
+      setIsConnected(false);
+    };
+
+    stompClient.reconnectDelay = 1000;
 
     return () => {
       stompClient?.disconnect();
@@ -74,5 +89,5 @@ export default function StompClientProvider({ children }: Props) {
     };
   }, [stompClient]);
 
-  return <StompClientContext.Provider value={{ stompClient }}>{children}</StompClientContext.Provider>;
+  return <StompClientContext.Provider value={{ stompClient, isConnected }}>{children}</StompClientContext.Provider>;
 }

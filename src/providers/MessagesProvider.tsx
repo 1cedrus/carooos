@@ -1,5 +1,5 @@
 import { createContext, Dispatch, SetStateAction, useContext, useEffect, useState } from 'react';
-import { ConversationInfo, Pagination, Props } from '@/types.ts';
+import { ChatMessage, ConversationInfo, Pagination, Props } from '@/types.ts';
 import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
 import { toast } from 'react-toastify';
 import ConversationService from '@/services/ConversationService.ts';
@@ -58,9 +58,32 @@ export default function MessagesProvider({ children }: Props) {
     }
   }, [authToken, username]);
 
+  const onMessages = (messages: ChatMessage) => {
+    setConversations((pre) => {
+      const target = pre.find((o) => o.cid === messages.conversation);
+
+      const currentTarget = window.location.href.match(/\/messages\/(\d+)/)?.[1];
+
+      const isCurrentTarget = currentTarget === target?.cid.toString();
+
+      if (target) {
+        return pre.map((o) =>
+          o.cid !== messages.conversation
+            ? o
+            : { ...o, lastMessage: messages, numberOfUnseen: isCurrentTarget ? 0 : o.numberOfUnseen + 1 },
+        ) as ConversationInfo[];
+      } else {
+        return [
+          { cid: messages.conversation, lastMessage: messages, numberOfUnseen: 1, peers: [messages.sender] },
+          ...pre,
+        ] as ConversationInfo[];
+      }
+    });
+  };
+
   useEffect(() => {
     eventEmitter.on(EventName.ReloadConversation, fetchConversations);
-    eventEmitter.on(EventName.OnTopicMessages, fetchConversations);
+    eventEmitter.on(EventName.OnTopicMessages, onMessages);
 
     return () => {
       eventEmitter.off(EventName.ReloadConversation);

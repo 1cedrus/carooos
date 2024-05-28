@@ -8,6 +8,7 @@ import UserService from '@/services/UserService.ts';
 import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
 import { toast } from 'react-toastify';
 import Button from '@/components/custom/Button.tsx';
+import { LoadingButton } from '@mui/lab';
 
 const VisuallyHiddenInput = styled('input')({
   clip: 'rect(0 0 0 0)',
@@ -26,6 +27,7 @@ export default function ChangeProfilePicModal() {
   const [file, setFile] = useState<File | null>(null);
   const { authToken } = useAuthenticationContext();
   const { profilePicUrl } = useUserInformationContext();
+  const [onLoading, setOnLoading] = useState(false);
 
   useEffect(() => {
     eventEmitter.on(EventName.OpenChangeProfilePicModal, () => setOpen(true));
@@ -43,6 +45,8 @@ export default function ChangeProfilePicModal() {
   const handleSubmit = async () => {
     if (!file) return;
 
+    setOnLoading(true);
+
     try {
       await UserService.setProfilePic(authToken, file);
       toast.success('Profile picture changed successfully');
@@ -51,6 +55,7 @@ export default function ChangeProfilePicModal() {
       toast.error((e as Error).message);
     }
 
+    setOnLoading(false);
     handleClose();
   };
 
@@ -82,9 +87,14 @@ export default function ChangeProfilePicModal() {
               onChange={(event) => setFile(event.target.files![0])}
             />
           </Button>
-          <Button onClick={handleSubmit} disabled={!file} fullWidth>
+          <LoadingButton
+            onClick={handleSubmit}
+            disabled={!file}
+            fullWidth
+            loading={onLoading}
+            loadingIndicator='Applying...'>
             Apply
-          </Button>
+          </LoadingButton>
         </Box>
       </DialogContent>
     </Dialog>

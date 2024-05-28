@@ -3,7 +3,7 @@ import { useUserInformationContext } from '@/providers/UserInformationProvider.t
 import { FormEvent, useEffect, useRef, useState } from 'react';
 import ConversationService from '@/services/ConversationService.ts';
 import { useAuthenticationContext } from '@/providers/AuthenticationProvider.tsx';
-import { Avatar, Box, IconButton } from '@mui/material';
+import { Avatar, Box, CircularProgress, IconButton } from '@mui/material';
 import Message from '@/pages/Dashboard/MessagesBox/Message.tsx';
 import ArrowBackOutlinedIcon from '@mui/icons-material/ArrowBackOutlined';
 import ArrowForwardOutlinedIcon from '@mui/icons-material/ArrowForwardOutlined';
@@ -62,6 +62,7 @@ function ChatView({ conversation: { cid, peers } }: ChatViewProps) {
   const [nonce, _setNonce] = useState(Date.now());
   const [pageIndex, setPageIndex] = useState(0);
   const [hasNextPage, setHasNextPage] = useState(false);
+  const [onLoading, setOnLoading] = useState(false);
   const [isLoad, setIsLoad] = useState(false);
   const { y } = useScroll(ref);
 
@@ -78,6 +79,7 @@ function ChatView({ conversation: { cid, peers } }: ChatViewProps) {
 
     setCurrentMessages((pre) => [...items, ...pre]);
     setHasNextPage(hasNextPage);
+    setOnLoading(false);
 
     setIsLoad(true);
   }, [pageIndex]);
@@ -106,10 +108,11 @@ function ChatView({ conversation: { cid, peers } }: ChatViewProps) {
       return;
     }
 
+    const rawMessage = { content: msg };
+    setMsg('');
+
     try {
-      if (await ConversationService.sendMessage(cid, { content: msg }, authToken)) {
-        setMsg('');
-      }
+      await ConversationService.sendMessage(cid, rawMessage, authToken);
     } catch (e) {
       toast.error((e as Error).message);
     }
@@ -122,8 +125,9 @@ function ChatView({ conversation: { cid, peers } }: ChatViewProps) {
   }, [currentMessages]);
 
   useEffect(() => {
-    if (y < 100 && hasNextPage) {
+    if (!onLoading && y < 100 && hasNextPage) {
       setPageIndex((pre) => pre + 1);
+      setOnLoading(true);
     }
   }, [y]);
 
@@ -152,8 +156,10 @@ function ChatView({ conversation: { cid, peers } }: ChatViewProps) {
           <ArrowBackOutlinedIcon />
         </IconButton>
       </Box>
-      <Box ref={ref} className='h-full overflow-y-scroll border-[1px] border-black rounded my-2'>
+      <Box ref={ref} className='h-full overflow-y-auto border-[1px] border-black rounded my-2 '>
         <Box className='h-full flex flex-col gap-2 p-2'>
+          {onLoading && <CircularProgress />}
+          {currentMessages.length === 0 && <Box className='text-center'>No messages</Box>}
           {currentMessages.map(({ content, timeStamp, sender }) => (
             <Message
               key={content! + timeStamp!}
@@ -162,6 +168,7 @@ function ChatView({ conversation: { cid, peers } }: ChatViewProps) {
               className={sender === username ? 'self-end rounded-l-2xl' : 'self-start rounded-r-2xl bg-gray-200'}
             />
           ))}
+          <Box className='pt-2'></Box>
         </Box>
       </Box>
       <Box component='form' onSubmit={sendMessage} className='flex gap-2'>

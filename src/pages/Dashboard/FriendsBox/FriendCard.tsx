@@ -47,7 +47,7 @@ export default function FriendCard({ friend: { username, isOnline }, action, act
   return (
     <Box className='flex justify-between items-center border-[1px] border-black shadow-custom rounded p-2'>
       <Box className='flex justify-between items-center'>
-        <Box className='flex gap-2 items-center w-[10rem]'>
+        <Box className='flex gap-4 items-center w-[15rem]'>
           {isOnline ? (
             <StyledBadge overlap='circular' anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }} variant='dot'>
               <Avatar src={profilePicUrl} sx={{ border: '1px solid black' }} />
@@ -55,7 +55,9 @@ export default function FriendCard({ friend: { username, isOnline }, action, act
           ) : (
             <Avatar src={profilePicUrl} sx={{ border: '1px solid black' }} />
           )}
-          <Box component='h2'>{username}</Box>
+          <Box component='h2' className='font-bold'>
+            {username}
+          </Box>
         </Box>
         {!hideElo && (
           <Box component='h4' className='flex items-centers gap-1'>

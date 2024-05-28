@@ -19,13 +19,13 @@ export default function FriendResponseCard({ sender }: FriendResponseCardProps) 
   const doAccept = async () => {
     if (await FriendsService.send(username, authToken)) {
       triggerEvent(EventName.ReloadFriends);
+      triggerEvent(EventName.ReloadConversation);
     }
   };
 
   const doRefuse = async () => {
     if (await FriendsService.refuse(username!, authToken)) {
       triggerEvent(EventName.ReloadFriends);
-      triggerEvent(EventName.ReloadConversation);
     }
   };
 

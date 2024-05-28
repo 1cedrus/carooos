@@ -15,6 +15,7 @@ import ProfileSettingButton from '@/pages/Dashboard/UserBox/ProfileSettingButton
 import ChangePasswordModal from '@/pages/Dashboard/UserBox/ChangePasswordModal.tsx';
 import ChangeEmailModal from '@/pages/Dashboard/UserBox/ChangeEmailModal.tsx';
 import { useFriendsContext } from '@/providers/FriendsProvider.tsx';
+import UserGameSkeleton from '@/components/skeleton/UserGameSkeleton.tsx';
 
 export default function UserBox() {
   const { authToken } = useAuthenticationContext();
@@ -97,32 +98,42 @@ export default function UserBox() {
             <Divider />
             <Box className='h-[17rem]'>
               <Box className='h-full overflow-y-auto flex flex-col gap-2 mt-2'>
-                {games?.length ? (
-                  games?.map((game) => (
-                    <Box
-                      onClick={() => setViewsGame(game)}
-                      key={game.id}
-                      className='flex justify-between cursor-pointer border-[1px] border-black rounded p-2 shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]'>
-                      <Box>
-                        <Box className=''>
-                          opponent: <strong>{game.roomCode.split('-').find((o) => o !== username)}</strong>
+                {games ? (
+                  games.length ? (
+                    games.map((game) => (
+                      <Box
+                        onClick={() => setViewsGame(game)}
+                        key={game.id}
+                        className='flex justify-between cursor-pointer border-[1px] border-black rounded p-2 shadow-[0px_-3px_0px_0px_rgba(17,18,38,0.20)_inset]'>
+                        <Box>
+                          <Box className=''>
+                            opponent: <strong>{game.roomCode.split('-').find((o) => o !== username)}</strong>
+                          </Box>
+                          <Box component='h2'>
+                            played_at: <strong>{fromNow(Date.parse(game.playedAt))} </strong>
+                          </Box>
                         </Box>
-                        <Box component='h2'>
-                          played_at: <strong>{fromNow(Date.parse(game.playedAt))} </strong>
+                        <Box>
+                          <Box component='h2'>
+                            first_move: <strong>{game.firstMoveUser} </strong>
+                          </Box>
+                          <Box component='h2'>
+                            winner: <strong>{game.winner || 'none'} </strong>
+                          </Box>
                         </Box>
                       </Box>
-                      <Box>
-                        <Box component='h2'>
-                          first_move: <strong>{game.firstMoveUser} </strong>
-                        </Box>
-                        <Box component='h2'>
-                          winner: <strong>{game.winner || 'none'} </strong>
-                        </Box>
-                      </Box>
-                    </Box>
-                  ))
+                    ))
+                  ) : (
+                    <Box className='text-center'>You have not done any match!</Box>
+                  )
                 ) : (
-                  <Box className='text-center'>You have not done any match!</Box>
+                  <Box className='flex flex-col gap-2'>
+                    {Array(3)
+                      .fill(0)
+                      .map((_, i) => (
+                        <UserGameSkeleton key={i} />
+                      ))}
+                  </Box>
                 )}
               </Box>
             </Box>
