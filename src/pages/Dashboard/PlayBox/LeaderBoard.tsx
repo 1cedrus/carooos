@@ -20,10 +20,10 @@ export default function LeaderBoard() {
   }, []);
 
   return (
-    <Box className='h-[40rem] w-[45rem] border-2 border-black rounded-2xl shadow-custom bg-white p-4 overflow-auto'>
+    <Box className='h-[40rem] w-[45rem] border-2 border-black rounded-2xl shadow-custom bg-white p-4 overflow-auto flex flex-col gap-2 overflow-y-auto'>
       {leaderBoard?.map(({ username, elo, profilePicUrl }) => (
-        <Box key={username} className='flex gap-2 p-2 border-2 border-black shadow-custom rounded-xl items-center'>
-          <Avatar src={`${IMAGE_URL}/${profilePicUrl}`}></Avatar>
+        <Box key={username} className='flex gap-2 p-2 border-[1px] border-black shadow-custom rounded-xl items-center'>
+          <Avatar className='border-[1px] border-black' src={`${IMAGE_URL}/${profilePicUrl}`}></Avatar>
           <Box className='font-bold'>{username}:</Box>
           <Box>{elo}</Box>
         </Box>
